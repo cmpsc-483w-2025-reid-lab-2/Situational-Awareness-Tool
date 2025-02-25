@@ -18,22 +18,23 @@ import androidx.compose.runtime.setValue
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setTheme(android.R.style.Theme_DeviceDefault)
         setContent {
-            var accepted by remember { mutableStateOf(false) }
+            CustomTheme {
+                var accepted by remember { mutableStateOf(false) }
 
-            if (accepted) {
-                MainAppScreen()
-            } else {
-                LicenseAgreementScreen(
-                    onAccept = { accepted = true },
-                    onDecline = { finish() }
-                )
+                if (accepted) {
+                    MainAppScreen()
+                } else {
+                    LicenseAgreementScreen(
+                        onAccept = { accepted = true },
+                        onDecline = { finish() }
+                    )
+                }
             }
         }
     }
 }
-
 @Composable
 fun MainAppScreen() {
     androidx.wear.compose.material.Scaffold {

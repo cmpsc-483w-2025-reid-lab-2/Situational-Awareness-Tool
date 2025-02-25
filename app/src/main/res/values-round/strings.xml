@@ -1,3 +1,6 @@
 <resources>
-    <string name="hello_world">From the Round world,\nHello, %1$s!</string>
+    <string name="eula_header">End User License Agreement</string>
+    <string name="eula_body">This app may collect personal data, including but not limited to heart rate data and health-related information, which will be processed according to the Company\'s Privacy Policy.
+        By using the App, you consent to the collection and use of this data as described in the Privacy Policy. You can access and modify your data settings at any time through the App.
+    \nFind more at: bit.ly/zdfq8A</string>
 </resources>
