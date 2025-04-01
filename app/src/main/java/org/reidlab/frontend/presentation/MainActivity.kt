@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
                 var accepted by remember { mutableStateOf(previouslyAccepted) }
 
                 if (accepted) {
-                    MainAppScreen()
+                    //MainAppScreen()
+                    HeartRateScreen()
                 } else {
                     LicenseAgreementScreen(
                         onAccept = {
