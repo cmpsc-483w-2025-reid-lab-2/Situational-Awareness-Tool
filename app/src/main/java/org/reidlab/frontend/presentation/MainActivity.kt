@@ -5,6 +5,7 @@
 
 package org.reidlab.frontend.presentation
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,19 +16,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
+private const val PREFS_NAME = "AppPrefs_HeartRateMonitor"
+private const val KEY_LICENSE_ACCEPTED = "license_accepted_v1"
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(android.R.style.Theme_DeviceDefault)
+
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val previouslyAccepted = prefs.getBoolean(KEY_LICENSE_ACCEPTED, false)
+
         setContent {
             CustomTheme {
-                var accepted by remember { mutableStateOf(false) }
+                var accepted by remember { mutableStateOf(previouslyAccepted) }
 
                 if (accepted) {
                     MainAppScreen()
                 } else {
                     LicenseAgreementScreen(
-                        onAccept = { accepted = true },
+                        onAccept = {
+                            prefs.edit().putBoolean(KEY_LICENSE_ACCEPTED, true).apply()
+                            accepted = true },
                         onDecline = { finish() }
                     )
                 }
