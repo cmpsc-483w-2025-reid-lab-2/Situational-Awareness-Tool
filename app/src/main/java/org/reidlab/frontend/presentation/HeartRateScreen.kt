@@ -43,10 +43,10 @@ fun getZoneColor(currentHr: Int, maxHr: Int): Color {
 
 // --- The Main UI Composable ---
 @Composable
-fun HeartRateScreen() {
+fun HeartRateScreen(isAnimationEnabled: Boolean) {
     // --- State for the current heart rate ---
     // In a real app, this would come from a ViewModel connected to sensors
-    var currentHeartRate by remember { mutableStateOf(75) } // Initial simulated value
+    var currentHeartRate by remember { mutableStateOf(75) }
 
     // --- Simulate Heart Rate Changes (for demonstration) ---
     LaunchedEffect(Unit) { // Use Unit so it runs once on composition
@@ -58,8 +58,11 @@ fun HeartRateScreen() {
     }
 
     // --- Calculate Progress and Color ---
-    val progress = (currentHeartRate.toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
-    val zoneColor = getZoneColor(currentHeartRate, MAX_HEART_RATE)
+    val activeZoneColor = getZoneColor(currentHeartRate, MAX_HEART_RATE)
+    val zoneColor = if (isAnimationEnabled) activeZoneColor else Color.Gray
+    val progress = if (isAnimationEnabled)
+        (currentHeartRate.toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
+    else 0f
 
     // --- Wear Compose UI Structure ---
     Scaffold {
@@ -124,6 +127,8 @@ fun HeartRateScreen() {
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

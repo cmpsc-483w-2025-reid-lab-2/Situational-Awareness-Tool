@@ -41,6 +41,8 @@ android {
 
 dependencies {
 
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
     implementation(libs.play.services.wearable)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
@@ -64,4 +66,5 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     debugImplementation(libs.tiles.tooling)
+
 }
