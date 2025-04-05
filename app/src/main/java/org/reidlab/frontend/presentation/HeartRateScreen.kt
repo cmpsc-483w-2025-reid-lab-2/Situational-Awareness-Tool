@@ -1,5 +1,12 @@
 package org.reidlab.frontend.presentation
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -68,6 +75,18 @@ fun HeartRateScreen(
         (currentHeartRate.toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
     else 0f
 
+    val infiniteTransition = rememberInfiniteTransition(label = "Heartbeat")
+
+    val heartScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = if (isAnimationEnabled) 1.2f else 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "HeartbeatScale"
+    )
+
     Scaffold {
         Box(
             modifier = Modifier
@@ -118,7 +137,9 @@ fun HeartRateScreen(
                             imageVector = Icons.Filled.Favorite,
                             contentDescription = "Heart Rate Zone",
                             tint = zoneColor,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier
+                                .size(20.dp)
+                                .scale(heartScale)
                         )
                         Text(
                             text = "bpm",
