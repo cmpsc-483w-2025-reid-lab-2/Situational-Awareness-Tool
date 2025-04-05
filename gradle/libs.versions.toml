@@ -1,5 +1,7 @@
 [versions]
+accompanistPagerIndicators = "0.28.0"
 agp = "8.9.1"
+horologistComposeLayout = "0.2.0"
 kotlin = "2.0.0"
 playServicesWearable = "19.0.0"
 composeBom = "2025.03.01"
@@ -19,6 +21,9 @@ material3Android = "1.3.1"
 composeMaterial3 = "1.0.0-alpha35"
 
 [libraries]
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPagerIndicators" }
+accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" }
+horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologistComposeLayout" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 ui = { group = "androidx.compose.ui", name = "ui" }
