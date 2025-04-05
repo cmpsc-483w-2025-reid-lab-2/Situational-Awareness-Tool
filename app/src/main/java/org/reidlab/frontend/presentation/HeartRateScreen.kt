@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive // Import isActive
 
 private const val MAX_HEART_RATE = 190
-private const val SIMULATION_DELAY_MS = 2000L
+private const val SIMULATION_DELAY_MS = 1000L
 
 // Zone colors based on:
 // https://www8.garmin.com/manuals/webhelp/forerunner225/EN-US/GUID-DA94D501-8DA7-46A4-93D4-34504337272C.html
@@ -83,28 +83,68 @@ fun HeartRateScreen(
     var currentHeartRate by remember { mutableStateOf<Int?>(null) }
     val allowedHeartRate = listOf(65, 80, 95, 110, 120, 140, 160)
 
-    // Relaunch the effect whenever isSimulationActive changes
+// Relaunch the effect whenever isSimulationActive changes
     LaunchedEffect(isSimulationActive) {
         if (isSimulationActive) {
-            // Start generating numbers if simulation is active
-            // Initialize with a value immediately if null, picking from the allowed list
-            if (currentHeartRate == null) {
-                currentHeartRate = allowedHeartRate.random() // Use the list
-            }
+            // --- State for cycling within the effect scope ---
+            // Start at the first element index
+            var currentIndex = 0
+            // Start by moving towards the larger end
+            var isIncreasing = true
+            // --- End state for cycling ---
+
+            // Set the initial heart rate when simulation starts/restarts
+            // Always start from the beginning of the list when activated
+            currentHeartRate = allowedHeartRate[currentIndex]
+
             // Loop while the effect is active and simulation should be running
             while (isActive) { // Use isActive from coroutine scope
-                delay(SIMULATION_DELAY_MS)
-                // Ensure we don't update if the state changed back to inactive during the delay
+                delay(SIMULATION_DELAY_MS) // Wait for the delay first
+
+                // Ensure simulation is still active after the delay
                 if (isSimulationActive) {
-                    // Pick a new random value from the allowed list
-                    currentHeartRate = allowedHeartRate.random() // Use the list
+
+                    // --- Calculate the next index ---
+                    if (isIncreasing) {
+                        if (currentIndex < allowedHeartRate.lastIndex) {
+                            // Move to the next item if not at the end
+                            currentIndex++
+                        } else {
+                            // Reached the end, switch direction and move back
+                            isIncreasing = false
+                            currentIndex--
+                        }
+                    } else { // Decreasing
+                        if (currentIndex > 0) {
+                            // Move to the previous item if not at the beginning
+                            currentIndex--
+                        } else {
+                            // Reached the beginning, switch direction and move forward
+                            isIncreasing = true
+                            currentIndex++
+                        }
+                    }
+                    // --- End index calculation ---
+
+                    // Update the heart rate state with the value at the new index
+                    // Add a safety check just in case (though logic should prevent out of bounds)
+                    if (currentIndex in allowedHeartRate.indices) {
+                        currentHeartRate = allowedHeartRate[currentIndex]
+                    } else {
+                        // Should not happen with current logic, but as a fallback reset
+                        currentIndex = 0
+                        isIncreasing = true
+                        currentHeartRate = allowedHeartRate[currentIndex]
+                        println("Warning: Heart rate index out of bounds, resetting.") // Optional log
+                    }
+
                 } else {
-                    // Break if simulation turned off during delay
-                    break // Semicolon is optional in Kotlin
+                    // Break the loop if simulation turned off during the delay
+                    break
                 }
             }
         } else {
-            // If simulation is not active, set heart rate to null
+            // If simulation is not active (or becomes inactive), set heart rate to null
             currentHeartRate = null
         }
     }
