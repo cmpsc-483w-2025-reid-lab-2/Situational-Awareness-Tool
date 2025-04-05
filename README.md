@@ -2,6 +2,9 @@
 
 **Spring 2025 Capstone Project - REID Lab 2**
 
+### App releases can be found [here](https://github.com/cmpsc-483w-2025-reid-lab-2/Situational-Awareness-Tool/releases).
+Please note that this app requires a WearOS watch with WearOS 5.x or above running on it.
+
 ## Table of Contents
 
 * [Project Overview](#project-overview)
