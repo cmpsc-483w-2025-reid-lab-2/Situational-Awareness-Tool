@@ -1,26 +1,63 @@
-# situational-awareness-training-tool
-2025 Capstone Project by REID Lab 2.
-Project title: Situational Awareness in Low-Time High-Risk Scenarios
+# Situational Awareness in Low-Time High-Risk Scenarios
 
-Sponsor:
-Dr. Tahira Reid Smith
+**Spring 2025 Capstone Project - REID Lab 2**
 
-Project Manager:
-Marc Singer
+## Table of Contents
 
-Frontend Department:
-Ann Zezyus, Sourajit Karmakar, Seongjin Baek
+* [Project Overview](#project-overview)
+* [The Problem](#the-problem)
+* [Our Solution](#our-solution)
+* [Project Goal](#project-goal)
+* [Target Audience](#target-audience)
+* [The Team](#the-team)
+* [Sponsor](#sponsor)
 
-Backend Department:
-Kevin Mcknight, Joel Guzman, Abhinav Sama, Anirban Maity
+## Project Overview
 
-In recent times, we have seen a rise in tragedies caused by misjudgment in high-risk low-time scenarios. From a paramedic deciding whether to administer a life-saving drug without knowing the victim’s allergies to police officers choosing to shoot 
-an unarmed civilian in fear of their safety. Regardless of the real reason behind these decisions, it is apparent that the lack of situational awareness in high-risk low-time scenarios considerably worsens individuals’ decision-making.  
+This project focuses on enhancing situational awareness for individuals, specifically police officers, operating in high-risk, low-time scenarios. We are developing a mobile application designed as a training tool to help officers recognize physiological stress indicators, manage their responses, and ultimately improve their decision-making under pressure.
 
-However, knowing this correlation, there is yet to exist a surefire tool to enhance situational awareness in order to improve decision-making in these situations. The continued absence of such a tool will only increase the number of tragedies caused by misjudgment and,
-in turn, the number of lives lost. While the desired solution to this problem is one that encompasses many different scenarios in hopes to enhance situational awareness no matter the circumstance. This project will focus on enhancing the situational awareness of our
-police departments to circumvent tragedies caused directly by our police force via the creation of an application designed to train and aid officers acknowledge when they are most vulnerable to making a mistake in their decision-making.  
+## The Problem
 
-The main approach to succeed in this will be to take advantage of the correlation between heightened heart rates and the clouding of judgment that comes with it to notify and, in turn, improve officers’ tolerance to high-risk scenarios by controlling their stress and 
-emotions that may cloud their judgment. We will utilize accredited marksmanship tools and scenarios coupled with heart rate monitors to create a user-friendly app that enables police officers to easily and effectively train and improve their stress management. By the end 
-of this project, the application will offer a practical and cheaper alternative to enhance situational awareness than current training tools most police departments are unable to offer to their officers. 
+Tragic events often occur due to misjudgments made in high-stress situations where time is limited. Whether it's a paramedic making a critical medical decision or a police officer facing a potential threat, a decline in situational awareness significantly impairs decision-making capabilities.
+
+Despite recognizing this correlation, there remains a gap in readily available and effective tools specifically designed to bolster situational awareness during these critical moments. The continued absence of such tools risks further preventable tragedies.
+
+## Our Solution
+
+While the ideal solution would address numerous high-risk scenarios, this project specifically targets enhancing the situational awareness of police officers. We propose an application that trains officers to identify when they are most vulnerable to decision-making errors.
+
+Our approach leverages the link between elevated heart rates and the potential for clouded judgment under stress. The application will:
+
+1.  **Monitor Heart Rate:** Utilize heart rate monitors during training exercises.
+2.  **Simulate Scenarios:** Incorporate accredited marksmanship tools and relevant training scenarios.
+3.  **Provide Feedback:** Offer insights to users about their physiological responses during simulated high-stress events.
+4.  **Train Stress Management:** Enable officers to practice recognizing and controlling stress responses that could impair judgment.
+
+The application aims to be user-friendly, allowing officers to effectively train and improve their tolerance and management of high-risk situations.
+
+## Project Goal
+
+By the end of this project (Spring 2025), we aim to deliver an application that serves as a **practical, accessible, and cost-effective alternative or supplement** to current situational awareness and stress management training tools, many of which are beyond the reach of smaller police departments. The ultimate goal is to help circumvent tragedies linked to impaired decision-making within the police force.
+
+## Target Audience
+
+* Police Officers
+* Law Enforcement Training Academies and Departments
+
+## The Team (REID Lab 2 - 2025)
+
+* **Project Manager:** Marc Singer
+* **Frontend Department:**
+    * Ann Zezyus
+    * Sourajit Karmakar
+    * Seongjin Baek
+* **Backend Department:**
+    * Kevin Mcknight
+    * Joel Guzman
+    * Abhinav Sama
+    * Anirban Maity
+
+
+## Sponsor
+
+* **Dr. Tahira Reid Smith**
