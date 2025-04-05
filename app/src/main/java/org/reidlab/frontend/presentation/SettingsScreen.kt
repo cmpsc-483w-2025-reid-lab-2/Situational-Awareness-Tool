@@ -9,7 +9,7 @@ import androidx.wear.compose.material.* // Provides Scaffold, TimeText, etc.
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
-// Imports for Scrolling & Rotary Input
+// --- Imports for Scrolling & Rotary Input ---
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.focus.FocusRequester
@@ -25,19 +25,16 @@ fun SettingsScreen(
     onStartTimer: () -> Unit,
     onStopTimer: () -> Unit
 ) {
-    // 1. Add ScrollState and FocusRequester
+    // Add ScrollState and FocusRequester
     val scrollState = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
+    val solidChipBackgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.8f) // Example color
 
     Scaffold(
         timeText = {
             TimeText()
         },
-        vignette = { } // Vignette disabled as before
-        // Note: PositionIndicator doesn't directly support ScrollState.
-        // To add a scrollbar easily, consider using ScalingLazyColumn instead of Column.
     ) {
-        // 2. Request focus when the screen launches
         // Placed inside Scaffold content lambda but outside Column
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
@@ -49,7 +46,7 @@ fun SettingsScreen(
                 .fillMaxSize()
                 // Keep existing padding
                 .padding(horizontal = 16.dp, vertical = 27.dp)
-                // 3. Apply verticalScroll and rotaryScrollable modifiers
+                // Apply verticalScroll and rotaryScrollable modifiers
                 .verticalScroll(scrollState) // Make Column scrollable
                 .rotaryScrollable(            // Handle rotary input
                     behavior = RotaryScrollableDefaults.behavior(scrollableState = scrollState),
@@ -60,16 +57,14 @@ fun SettingsScreen(
             // Consider using Arrangement.spacedBy() for consistent spacing
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
         ) {
-            // --- Content Items ---
+            // Content Items
             // Settings Title
             Text(
                 "Settings",
                 style = MaterialTheme.typography.title3,
                 fontSize = 16.sp, // Explicit size override
             )
-            // Removed Spacer - Arrangement.spacedBy handles spacing now
-
-            // Toggle Chip
+            // Toggle Chip 1 (Heart Rate Animation)
             ToggleChip(
                 checked = isAnimationEnabled,
                 onCheckedChange = onToggleAnimation,
@@ -84,9 +79,14 @@ fun SettingsScreen(
                         )
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ToggleChipDefaults.toggleChipColors(
+                    checkedStartBackgroundColor = solidChipBackgroundColor, // Solid color when checked
+                    checkedEndBackgroundColor = solidChipBackgroundColor,   // Solid color when checked
+                    uncheckedStartBackgroundColor = solidChipBackgroundColor, // Solid color when unchecked
+                    uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
+                )
             )
-            // Removed Spacer
 
             // Start/Stop Button
             Button(
