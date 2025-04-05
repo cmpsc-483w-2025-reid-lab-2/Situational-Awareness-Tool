@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
                 var accepted by remember { mutableStateOf(previouslyAccepted) }
 
                 if (accepted) {
-                    //MainAppScreen()
                     MainAppScreen()
                 } else {
                     LicenseAgreementScreen(
