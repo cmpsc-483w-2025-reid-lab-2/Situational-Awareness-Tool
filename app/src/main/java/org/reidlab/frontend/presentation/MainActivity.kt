@@ -32,8 +32,7 @@ class MainActivity : ComponentActivity() {
                 var accepted by remember { mutableStateOf(previouslyAccepted) }
 
                 if (accepted) {
-                    //MainAppScreen()
-                    HeartRateScreen()
+                    MainAppScreen()
                 } else {
                     LicenseAgreementScreen(
                         onAccept = {
@@ -43,18 +42,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
-        }
-    }
-}
-@Composable
-fun MainAppScreen() {
-    androidx.wear.compose.material.Scaffold {
-        androidx.compose.foundation.layout.Column(
-            modifier = androidx.compose.ui.Modifier.fillMaxSize(),
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-        ) {
-            androidx.wear.compose.material.Text("Welcome to the App!")
         }
     }
 }
