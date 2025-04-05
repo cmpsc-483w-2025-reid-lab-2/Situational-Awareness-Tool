@@ -23,12 +23,14 @@ fun SettingsScreen(
     onToggleAnimation: (Boolean) -> Unit,
     isTimerRunning: Boolean,
     onStartTimer: () -> Unit,
-    onStopTimer: () -> Unit
+    onStopTimer: () -> Unit,
+    showMilliseconds: Boolean,
+    onToggleMilliseconds: (Boolean) -> Unit
 ) {
     // Add ScrollState and FocusRequester
     val scrollState = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
-    val solidChipBackgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.8f) // Example color
+    val solidChipBackgroundColor = MaterialTheme.colors.surface.copy(alpha = 1.0f)
 
     Scaffold(
         timeText = {
@@ -64,6 +66,7 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.title3,
                 fontSize = 16.sp, // Explicit size override
             )
+
             // Toggle Chip 1 (Heart Rate Animation)
             ToggleChip(
                 checked = isAnimationEnabled,
@@ -88,6 +91,37 @@ fun SettingsScreen(
                 )
             )
 
+            // Toggle Chip (Show milliseconds)
+            ToggleChip(
+                // Use the correct state variable for checked status
+                checked = showMilliseconds,
+                // Use the correct callback function when the chip is toggled
+                onCheckedChange = onToggleMilliseconds,
+                label = { Text("Show milliseconds") },
+                toggleControl = {
+                    Switch(
+                        // Also use the correct state variable here for the Switch visual
+                        checked = showMilliseconds,
+                        // Keep this null - the ToggleChip's onCheckedChange handles the logic
+                        onCheckedChange = null,
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = Color(0xFFAAE0FA), // Or your desired 'on' color
+                            checkedThumbColor = Color.White,
+                            // Optional: Define colors for the 'off' state too
+                            uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
+                            uncheckedThumbColor = MaterialTheme.colors.surface
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ToggleChipDefaults.toggleChipColors(
+                    checkedStartBackgroundColor = solidChipBackgroundColor, // Solid color when checked
+                    checkedEndBackgroundColor = solidChipBackgroundColor,   // Solid color when checked
+                    uncheckedStartBackgroundColor = solidChipBackgroundColor, // Solid color when unchecked
+                    uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
+                )
+            )
+
             // Start/Stop Button
             Button(
                 onClick = { if (isTimerRunning) onStopTimer() else onStartTimer() },
@@ -99,7 +133,7 @@ fun SettingsScreen(
             ) {
                 Text(if (isTimerRunning) "Stop Timer" else "Start Timer")
             }
-            // --- End Content Items ---
+            // End Content Items
         } // End Column
     } // End Scaffold
 }
