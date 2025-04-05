@@ -9,6 +9,14 @@ import androidx.wear.compose.material.* // Provides Scaffold, TimeText, etc.
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
+// Imports for Scrolling & Rotary Input
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.focus.FocusRequester
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+
+
 @Composable
 fun SettingsScreen(
     isAnimationEnabled: Boolean,
@@ -17,36 +25,51 @@ fun SettingsScreen(
     onStartTimer: () -> Unit,
     onStopTimer: () -> Unit
 ) {
-    // Scaffold now includes the timeText parameter
+    // 1. Add ScrollState and FocusRequester
+    val scrollState = rememberScrollState()
+    val focusRequester = remember { FocusRequester() }
+
     Scaffold(
         timeText = {
-            // Add the TimeText composable here
             TimeText()
         },
-        // Add this line to disable the default Vignette
-        vignette = { }
-        // You can also add other Scaffold elements like positionIndicator if needed
-        // positionIndicator = { PositionIndicator(scalingLazyListState = listState) }
+        vignette = { } // Vignette disabled as before
+        // Note: PositionIndicator doesn't directly support ScrollState.
+        // To add a scrollbar easily, consider using ScalingLazyColumn instead of Column.
     ) {
-        // Your main screen content goes inside the Scaffold's content lambda
+        // 2. Request focus when the screen launches
+        // Placed inside Scaffold content lambda but outside Column
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+
+        // Apply scrolling and rotary modifiers to the Column
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // Padding might need adjustment depending on visual preference with TimeText
-                .padding(horizontal = 16.dp, vertical = 27.dp),
+                // Keep existing padding
+                .padding(horizontal = 16.dp, vertical = 27.dp)
+                // 3. Apply verticalScroll and rotaryScrollable modifiers
+                .verticalScroll(scrollState) // Make Column scrollable
+                .rotaryScrollable(            // Handle rotary input
+                    behavior = RotaryScrollableDefaults.behavior(scrollableState = scrollState),
+                    focusRequester = focusRequester,
+                    reverseDirection = false
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top // Content starts from the top of the Column area
+            // Consider using Arrangement.spacedBy() for consistent spacing
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
         ) {
-            // Your "Settings" text - Note: applying both style and fontSize like this
-            // overrides the fontSize from the style. Consider using just fontSize
-            // or a smaller style like caption1 directly if that's the goal.
+            // --- Content Items ---
+            // Settings Title
             Text(
                 "Settings",
-                style = MaterialTheme.typography.title3, // Base style used
-                fontSize = 16.sp, // Font size is explicitly overridden here
+                style = MaterialTheme.typography.title3,
+                fontSize = 16.sp, // Explicit size override
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            // Removed Spacer - Arrangement.spacedBy handles spacing now
 
+            // Toggle Chip
             ToggleChip(
                 checked = isAnimationEnabled,
                 onCheckedChange = onToggleAnimation,
@@ -63,20 +86,20 @@ fun SettingsScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+            // Removed Spacer
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // Start/Stop Button
             Button(
                 onClick = { if (isTimerRunning) onStopTimer() else onStartTimer() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isTimerRunning) MaterialTheme.colors.error else Color(
-                        0xFFAAE0FA
-                    ),
+                    backgroundColor = if (isTimerRunning) MaterialTheme.colors.error else Color(0xFFAAE0FA),
                     contentColor = MaterialTheme.colors.onPrimary
                 )
             ) {
                 Text(if (isTimerRunning) "Stop Timer" else "Start Timer")
             }
+            // --- End Content Items ---
         } // End Column
     } // End Scaffold
 }
