@@ -14,15 +14,15 @@ fun MainAppScreen() {
 
     // State Variables
     // TODO: Consider loading initial values for toggles from SharedPreferences
-    var isAnimationEnabled by remember { mutableStateOf(true) }
+    var isAnimationEnabled by remember { mutableStateOf(true) } // State for animation toggle, default on
     var showMilliseconds by remember { mutableStateOf(false) } // State for millisecond toggle, default off
+    var isSimulationActive by remember { mutableStateOf(true) } // State for simulation toggle, default on
 
     var isTimerRunning by remember { mutableStateOf(false) }
     var elapsedTimeMillis by remember { mutableStateOf(0L) } // Changed to milliseconds
     var startTimeMillis by remember { mutableStateOf<Long?>(null) } // To store timer start time
 
     // Timer Logic
-    // LaunchedEffect now calculates elapsed time based on system time
     LaunchedEffect(key1 = isTimerRunning) {
         if (isTimerRunning) {
             val start = startTimeMillis ?: System.currentTimeMillis().also { startTimeMillis = it } // Get start time, record if missing
@@ -49,15 +49,16 @@ fun MainAppScreen() {
         // startTimeMillis = null
     }
 
-    // Main UI of the Settings Page
+    // Main UI with Pager
     HorizontalPager(count = 2, state = pagerState) { page ->
         when (page) {
             // Heart Rate Page
             0 -> HeartRateScreen(
-                isAnimationEnabled = isAnimationEnabled,
-                isTimerRunning = isTimerRunning,
+                isAnimationEnabled = isAnimationEnabled,    // Pass animation state
+                isTimerRunning = isTimerRunning,            // Pass Timer state
                 elapsedTimeMillis = elapsedTimeMillis,      // Pass milliseconds
                 showMilliseconds = showMilliseconds,        // Pass toggle state
+                isSimulationActive = isSimulationActive,    // Pass simulation state
                 onStopTimer = stopTimer
             )
             // Settings Page
@@ -65,9 +66,11 @@ fun MainAppScreen() {
                 isAnimationEnabled = isAnimationEnabled,         // Pass current state
                 onToggleAnimation = { isAnimationEnabled = it }, // Pass lambda to update state
 
-                // Add these parameters to SettingsScreen signature
                 showMilliseconds = showMilliseconds,              // Pass current state
                 onToggleMilliseconds = { showMilliseconds = it }, // Pass lambda to update state
+
+                isSimulationActive = isSimulationActive,          // Pass current simulation state
+                onToggleSimulation = { isSimulationActive = it }, // Pass lambda to update simulation state
 
                 isTimerRunning = isTimerRunning,
                 onStartTimer = startTimer,

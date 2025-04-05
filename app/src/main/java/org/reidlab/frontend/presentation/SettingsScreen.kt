@@ -28,7 +28,9 @@ fun SettingsScreen(
     onStartTimer: () -> Unit,
     onStopTimer: () -> Unit,
     showMilliseconds: Boolean,
-    onToggleMilliseconds: (Boolean) -> Unit
+    onToggleMilliseconds: (Boolean) -> Unit,
+    isSimulationActive: Boolean,
+    onToggleSimulation: (Boolean) -> Unit
 ) {
     // Add ScrollState and FocusRequester
     val scrollState = rememberScrollState()
@@ -81,6 +83,31 @@ fun SettingsScreen(
             ) {
                 Text(if (isTimerRunning) "Stop Timer" else "Start Timer")
             }
+            // --- New Toggle Chip (Heart Rate Simulation) ---
+            ToggleChip(
+                checked = isSimulationActive,          // Use the new state
+                onCheckedChange = onToggleSimulation, // Use the new callback
+                label = { Text("Heart Rate Simulation") }, // Descriptive label
+                toggleControl = {
+                    Switch(
+                        checked = isSimulationActive,      // Bind switch visual to state
+                        onCheckedChange = null,           // ToggleChip handles clicks
+                        colors = SwitchDefaults.colors(   // Consistent styling
+                            checkedTrackColor = Color(0xFFAAE0FA),
+                            checkedThumbColor = Color.White,
+                            uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
+                            uncheckedThumbColor = MaterialTheme.colors.surface
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ToggleChipDefaults.toggleChipColors( // Consistent styling
+                    checkedStartBackgroundColor = solidChipBackgroundColor,
+                    checkedEndBackgroundColor = solidChipBackgroundColor,
+                    uncheckedStartBackgroundColor = solidChipBackgroundColor,
+                    uncheckedEndBackgroundColor = solidChipBackgroundColor
+                )
+            )
             // Toggle Chip 1 (Heart Rate Animation)
             ToggleChip(
                 checked = isAnimationEnabled,

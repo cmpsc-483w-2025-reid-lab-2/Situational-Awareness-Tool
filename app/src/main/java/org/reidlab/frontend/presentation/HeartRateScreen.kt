@@ -24,9 +24,10 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive // Import isActive
 
 private const val MAX_HEART_RATE = 190
-private const val SIMULATION_DELAY_MS = 2000L
+private const val SIMULATION_DELAY_MS = 1000L
 
 // Zone colors based on:
 // https://www8.garmin.com/manuals/webhelp/forerunner225/EN-US/GUID-DA94D501-8DA7-46A4-93D4-34504337272C.html
@@ -38,6 +39,7 @@ private val zone5Color = Color(0xFFEC2529)
 private val defaultColor = Color.DarkGray
 
 fun getZoneColor(currentHr: Int, maxHr: Int): Color {
+    // Handle case where HR is 0 or less (e.g., when simulation is off)
     if (currentHr <= 0 || maxHr <= 0) return defaultColor
     val percentage = (currentHr.toFloat() / maxHr * 100).toInt()
     return when {
@@ -74,24 +76,89 @@ fun HeartRateScreen(
     isTimerRunning: Boolean,
     elapsedTimeMillis: Long,
     showMilliseconds: Boolean,
+    isSimulationActive: Boolean, // New parameter for the toggle state
     onStopTimer: () -> Unit
 ) {
-    var currentHeartRate by remember { mutableStateOf(75) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(SIMULATION_DELAY_MS)
-            currentHeartRate = (60..165).random()
+    // Use nullable Int? to represent the absence of a value when simulation is off
+    var currentHeartRate by remember { mutableStateOf<Int?>(null) }
+    val allowedHeartRate = listOf(59, 80, 95, 110, 120, 130, 140, 150, 160, 180)
+
+    // Relaunch the effect whenever isSimulationActive changes
+    LaunchedEffect(isSimulationActive) {
+        if (isSimulationActive) {
+            // State for cycling within the effect scope
+            // Start at the first element index
+            var currentIndex = 0
+            // Start by moving towards the larger end
+            var isIncreasing = true
+            // Set the initial heart rate when simulation starts/restarts
+            // Always start from the beginning of the list when activated
+            currentHeartRate = allowedHeartRate[currentIndex]
+            // Loop while the effect is active and simulation should be running
+            while (isActive) { // Use isActive from coroutine scope
+                delay(SIMULATION_DELAY_MS) // Wait for the delay first
+
+                // Ensure simulation is still active after the delay
+                if (isSimulationActive) {
+                    // Calculate the next index
+                    if (isIncreasing) {
+                        if (currentIndex < allowedHeartRate.lastIndex) {
+                            // Move to the next item if not at the end
+                            currentIndex++
+                        } else {
+                            // Reached the end, switch direction and move back
+                            isIncreasing = false
+                            currentIndex--
+                        }
+                    } else { // Decreasing
+                        if (currentIndex > 0) {
+                            // Move to the previous item if not at the beginning
+                            currentIndex--
+                        } else {
+                            // Reached the beginning, switch direction and move forward
+                            isIncreasing = true
+                            currentIndex++
+                        }
+                    }
+
+                    // Update the heart rate state with the value at the new index
+                    // Add a safety check just in case (though logic should prevent out of bounds)
+                    if (currentIndex in allowedHeartRate.indices) {
+                        currentHeartRate = allowedHeartRate[currentIndex]
+                    } else {
+                        // Should not happen with current logic, but as a fallback reset
+                        currentIndex = 0
+                        isIncreasing = true
+                        currentHeartRate = allowedHeartRate[currentIndex]
+                        println("Warning: Heart rate index out of bounds, resetting.") // Optional log
+                    }
+
+                } else {
+                    // Break the loop if simulation turned off during the delay
+                    break
+                }
+            }
+        } else {
+            // If simulation is not active (or becomes inactive), set heart rate to null
+            currentHeartRate = null
         }
     }
 
-    val activeZoneColor = getZoneColor(currentHeartRate, MAX_HEART_RATE)
-    val zoneColor = if (isAnimationEnabled) activeZoneColor else Color.Gray
-    val progress = if (isAnimationEnabled)
-        (currentHeartRate.toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
-    else 0f
+    // Use currentHeartRate ?: 0 to safely handle the null case for calculations
+    // getZoneColor already handles <= 0 returning defaultColor
+    val activeZoneColor = getZoneColor(currentHeartRate ?: 0, MAX_HEART_RATE)
+
+    // Zone color and progress depend on animation enabled AND a valid HR
+    val displayActive = isAnimationEnabled && currentHeartRate != null
+    val zoneColor = if (displayActive) activeZoneColor else defaultColor
+    val progress = if (displayActive) {
+        ((currentHeartRate ?: 0).toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
+    } else 0f
+
 
     val infiniteTransition = rememberInfiniteTransition(label = "Heartbeat")
 
+    // Heart scale animation depends only on isAnimationEnabled
     val heartScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = if (isAnimationEnabled) 1.2f else 1f,
@@ -139,7 +206,8 @@ fun HeartRateScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$currentHeartRate",
+                        // Display "--" if currentHeartRate is null, otherwise the number
+                        text = currentHeartRate?.toString() ?: "--",
                         color = Color.White,
                         fontSize = 52.sp,
                         fontWeight = FontWeight.Bold
@@ -151,14 +219,16 @@ fun HeartRateScreen(
                         Icon(
                             imageVector = Icons.Filled.Favorite,
                             contentDescription = "Heart Rate Zone",
+                            // Icon color reflects active state
                             tint = zoneColor,
                             modifier = Modifier
                                 .size(20.dp)
-                                .scale(heartScale)
+                                .scale(heartScale) // Scale animation runs independently based on isAnimationEnabled
                         )
                         Text(
                             text = "bpm",
-                            color = Color.White,
+                            // Hide bpm text if HR is null
+                            color = if (currentHeartRate != null) Color.White else Color.Transparent,
                             fontSize = 14.sp
                         )
                     }
