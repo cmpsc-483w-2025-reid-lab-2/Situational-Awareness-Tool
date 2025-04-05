@@ -9,44 +9,65 @@ import androidx.wear.compose.material.* // Provides Scaffold, TimeText, etc.
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
+// --- Imports for Scrolling & Rotary Input ---
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.focus.FocusRequester
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+
+
 @Composable
 fun SettingsScreen(
     isAnimationEnabled: Boolean,
     onToggleAnimation: (Boolean) -> Unit,
     isTimerRunning: Boolean,
     onStartTimer: () -> Unit,
-    onStopTimer: () -> Unit
+    onStopTimer: () -> Unit,
+    showMilliseconds: Boolean,
+    onToggleMilliseconds: (Boolean) -> Unit
 ) {
-    // Scaffold now includes the timeText parameter
+    // Add ScrollState and FocusRequester
+    val scrollState = rememberScrollState()
+    val focusRequester = remember { FocusRequester() }
+    val solidChipBackgroundColor = MaterialTheme.colors.surface.copy(alpha = 1.0f)
+
     Scaffold(
         timeText = {
-            // Add the TimeText composable here
             TimeText()
         },
-        // Add this line to disable the default Vignette
-        vignette = { }
-        // You can also add other Scaffold elements like positionIndicator if needed
-        // positionIndicator = { PositionIndicator(scalingLazyListState = listState) }
     ) {
-        // Your main screen content goes inside the Scaffold's content lambda
+        // Placed inside Scaffold content lambda but outside Column
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+
+        // Apply scrolling and rotary modifiers to the Column
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // Padding might need adjustment depending on visual preference with TimeText
-                .padding(horizontal = 16.dp, vertical = 27.dp),
+                // Keep existing padding
+                .padding(horizontal = 16.dp, vertical = 27.dp)
+                // Apply verticalScroll and rotaryScrollable modifiers
+                .verticalScroll(scrollState) // Make Column scrollable
+                .rotaryScrollable(            // Handle rotary input
+                    behavior = RotaryScrollableDefaults.behavior(scrollableState = scrollState),
+                    focusRequester = focusRequester,
+                    reverseDirection = false
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top // Content starts from the top of the Column area
+            // Consider using Arrangement.spacedBy() for consistent spacing
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
         ) {
-            // Your "Settings" text - Note: applying both style and fontSize like this
-            // overrides the fontSize from the style. Consider using just fontSize
-            // or a smaller style like caption1 directly if that's the goal.
+            // Content Items
+            // Settings Title
             Text(
                 "Settings",
-                style = MaterialTheme.typography.title3, // Base style used
-                fontSize = 16.sp, // Font size is explicitly overridden here
+                style = MaterialTheme.typography.title3,
+                fontSize = 16.sp, // Explicit size override
             )
-            Spacer(modifier = Modifier.height(8.dp))
 
+            // Toggle Chip 1 (Heart Rate Animation)
             ToggleChip(
                 checked = isAnimationEnabled,
                 onCheckedChange = onToggleAnimation,
@@ -61,22 +82,58 @@ fun SettingsScreen(
                         )
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ToggleChipDefaults.toggleChipColors(
+                    checkedStartBackgroundColor = solidChipBackgroundColor, // Solid color when checked
+                    checkedEndBackgroundColor = solidChipBackgroundColor,   // Solid color when checked
+                    uncheckedStartBackgroundColor = solidChipBackgroundColor, // Solid color when unchecked
+                    uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
+                )
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // Toggle Chip (Show milliseconds)
+            ToggleChip(
+                // Use the correct state variable for checked status
+                checked = showMilliseconds,
+                // Use the correct callback function when the chip is toggled
+                onCheckedChange = onToggleMilliseconds,
+                label = { Text("Show milliseconds") },
+                toggleControl = {
+                    Switch(
+                        // Also use the correct state variable here for the Switch visual
+                        checked = showMilliseconds,
+                        // Keep this null - the ToggleChip's onCheckedChange handles the logic
+                        onCheckedChange = null,
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = Color(0xFFAAE0FA), // Or your desired 'on' color
+                            checkedThumbColor = Color.White,
+                            // Optional: Define colors for the 'off' state too
+                            uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
+                            uncheckedThumbColor = MaterialTheme.colors.surface
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ToggleChipDefaults.toggleChipColors(
+                    checkedStartBackgroundColor = solidChipBackgroundColor, // Solid color when checked
+                    checkedEndBackgroundColor = solidChipBackgroundColor,   // Solid color when checked
+                    uncheckedStartBackgroundColor = solidChipBackgroundColor, // Solid color when unchecked
+                    uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
+                )
+            )
+
+            // Start/Stop Button
             Button(
                 onClick = { if (isTimerRunning) onStopTimer() else onStartTimer() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isTimerRunning) MaterialTheme.colors.error else Color(
-                        0xFFAAE0FA
-                    ),
+                    backgroundColor = if (isTimerRunning) MaterialTheme.colors.error else Color(0xFFAAE0FA),
                     contentColor = MaterialTheme.colors.onPrimary
                 )
             ) {
                 Text(if (isTimerRunning) "Stop Timer" else "Start Timer")
             }
+            // End Content Items
         } // End Column
     } // End Scaffold
 }
