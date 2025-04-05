@@ -13,9 +13,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 
+import org.reidlab.frontend.R
 
 @Composable
 fun SettingsScreen(
@@ -46,8 +49,8 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // Keep existing padding
-                .padding(horizontal = 16.dp, vertical = 27.dp)
+                // Define all the parameters of the padding for fine tuned spacings
+                .padding(start = 10.dp, end = 10.dp, top = 27.dp, bottom = 0.dp)
                 // Apply verticalScroll and rotaryScrollable modifiers
                 .verticalScroll(scrollState) // Make Column scrollable
                 .rotaryScrollable(            // Handle rotary input
@@ -133,6 +136,18 @@ fun SettingsScreen(
             ) {
                 Text(if (isTimerRunning) "Stop Timer" else "Start Timer")
             }
+            // App Name & Version & Author Text
+            Text(
+                text = "${stringResource(R.string.app_name)}\n${stringResource(R.string.app_version)} | ${stringResource(R.string.author_name)}",
+                fontSize = 11.sp,
+                // Use a muted color so it's less prominent
+                color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
+                textAlign = TextAlign.Center,
+                // Ensure it spans the width for centering to work correctly
+                modifier = Modifier.fillMaxWidth()
+            )
+            // Add some end padding so the button isn't cut off
+            Spacer(Modifier.height(35.dp))
             // End Content Items
         } // End Column
     } // End Scaffold

@@ -1,11 +1,7 @@
 <resources>
-    <string name="app_name">frontend</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
-    <string name="complication_label">Example complication</string>
-    <string name="eula_header">From the Square world,\nHello, %1$s!</string>
+    <string name="app_name">Frontend - HRM</string>
     <string name="eula_body">The App may collect personal data, including but not limited to heart rate data and health-related information, which will be processed according to the Company\'s Privacy Policy By using the App, you consent to the collection and use of this data as described in the Privacy Policy. You can access and modify your data settings at any time through the App.
         Find more at: bit.ly/zdfq8A</string>
+    <string name="author_name">REID Lab Team</string>
+    <string name="app_version">v0.1.5</string>
 </resources>
