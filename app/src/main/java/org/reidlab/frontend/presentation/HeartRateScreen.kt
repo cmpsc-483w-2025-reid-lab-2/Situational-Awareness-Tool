@@ -81,9 +81,9 @@ fun HeartRateScreen(
 ) {
     // Use nullable Int? to represent the absence of a value when simulation is off
     var currentHeartRate by remember { mutableStateOf<Int?>(null) }
-    val allowedHeartRate = listOf(65, 80, 95, 110, 120, 140, 160)
+    val allowedHeartRate = listOf(59, 80, 95, 110, 120, 130, 140, 150, 160, 180)
 
-// Relaunch the effect whenever isSimulationActive changes
+    // Relaunch the effect whenever isSimulationActive changes
     LaunchedEffect(isSimulationActive) {
         if (isSimulationActive) {
             // State for cycling within the effect scope
