@@ -70,6 +70,17 @@ fun SettingsScreen(
                 fontSize = 16.sp, // Explicit size override
             )
 
+            // Start/Stop Button
+            Button(
+                onClick = { if (isTimerRunning) onStopTimer() else onStartTimer() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isTimerRunning) MaterialTheme.colors.error else Color(0xFFAAE0FA),
+                    contentColor = MaterialTheme.colors.onPrimary
+                )
+            ) {
+                Text(if (isTimerRunning) "Stop Timer" else "Start Timer")
+            }
             // Toggle Chip 1 (Heart Rate Animation)
             ToggleChip(
                 checked = isAnimationEnabled,
@@ -124,18 +135,6 @@ fun SettingsScreen(
                     uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
                 )
             )
-
-            // Start/Stop Button
-            Button(
-                onClick = { if (isTimerRunning) onStopTimer() else onStartTimer() },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isTimerRunning) MaterialTheme.colors.error else Color(0xFFAAE0FA),
-                    contentColor = MaterialTheme.colors.onPrimary
-                )
-            ) {
-                Text(if (isTimerRunning) "Stop Timer" else "Start Timer")
-            }
             // App Name & Version & Author Text
             Text(
                 text = "${stringResource(R.string.app_name)}\n${stringResource(R.string.app_version)} | ${stringResource(R.string.author_name)}",
