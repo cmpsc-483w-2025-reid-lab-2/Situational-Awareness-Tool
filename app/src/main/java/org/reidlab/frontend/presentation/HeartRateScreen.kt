@@ -154,9 +154,9 @@ fun HeartRateScreen(
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 12.dp),
+                        .padding(bottom = 20.dp),
                     color = Color.White,
-                    fontSize = 18.sp
+                    fontSize = 14.sp
                 )
             }
         }
