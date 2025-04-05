@@ -81,24 +81,26 @@ fun HeartRateScreen(
 ) {
     // Use nullable Int? to represent the absence of a value when simulation is off
     var currentHeartRate by remember { mutableStateOf<Int?>(null) }
+    val allowedHeartRate = listOf(65, 80, 95, 110, 120, 140, 160)
 
     // Relaunch the effect whenever isSimulationActive changes
     LaunchedEffect(isSimulationActive) {
         if (isSimulationActive) {
             // Start generating numbers if simulation is active
-            // Initialize with a value immediately if null
+            // Initialize with a value immediately if null, picking from the allowed list
             if (currentHeartRate == null) {
-                currentHeartRate = (60..165).random()
+                currentHeartRate = allowedHeartRate.random() // Use the list
             }
             // Loop while the effect is active and simulation should be running
             while (isActive) { // Use isActive from coroutine scope
                 delay(SIMULATION_DELAY_MS)
                 // Ensure we don't update if the state changed back to inactive during the delay
                 if (isSimulationActive) {
-                    currentHeartRate = (60..165).random()
+                    // Pick a new random value from the allowed list
+                    currentHeartRate = allowedHeartRate.random() // Use the list
                 } else {
                     // Break if simulation turned off during delay
-                    break;
+                    break // Semicolon is optional in Kotlin
                 }
             }
         } else {
