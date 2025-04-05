@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive // Import isActive
 
 private const val MAX_HEART_RATE = 190
 private const val SIMULATION_DELAY_MS = 2000L
@@ -38,6 +39,7 @@ private val zone5Color = Color(0xFFEC2529)
 private val defaultColor = Color.DarkGray
 
 fun getZoneColor(currentHr: Int, maxHr: Int): Color {
+    // Handle case where HR is 0 or less (e.g., when simulation is off)
     if (currentHr <= 0 || maxHr <= 0) return defaultColor
     val percentage = (currentHr.toFloat() / maxHr * 100).toInt()
     return when {
@@ -74,24 +76,52 @@ fun HeartRateScreen(
     isTimerRunning: Boolean,
     elapsedTimeMillis: Long,
     showMilliseconds: Boolean,
+    isSimulationActive: Boolean, // New parameter for the toggle state
     onStopTimer: () -> Unit
 ) {
-    var currentHeartRate by remember { mutableStateOf(75) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(SIMULATION_DELAY_MS)
-            currentHeartRate = (60..165).random()
+    // Use nullable Int? to represent the absence of a value when simulation is off
+    var currentHeartRate by remember { mutableStateOf<Int?>(null) }
+
+    // Relaunch the effect whenever isSimulationActive changes
+    LaunchedEffect(isSimulationActive) {
+        if (isSimulationActive) {
+            // Start generating numbers if simulation is active
+            // Initialize with a value immediately if null
+            if (currentHeartRate == null) {
+                currentHeartRate = (60..165).random()
+            }
+            // Loop while the effect is active and simulation should be running
+            while (isActive) { // Use isActive from coroutine scope
+                delay(SIMULATION_DELAY_MS)
+                // Ensure we don't update if the state changed back to inactive during the delay
+                if (isSimulationActive) {
+                    currentHeartRate = (60..165).random()
+                } else {
+                    // Break if simulation turned off during delay
+                    break;
+                }
+            }
+        } else {
+            // If simulation is not active, set heart rate to null
+            currentHeartRate = null
         }
     }
 
-    val activeZoneColor = getZoneColor(currentHeartRate, MAX_HEART_RATE)
-    val zoneColor = if (isAnimationEnabled) activeZoneColor else Color.Gray
-    val progress = if (isAnimationEnabled)
-        (currentHeartRate.toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
-    else 0f
+    // Use currentHeartRate ?: 0 to safely handle the null case for calculations
+    // getZoneColor already handles <= 0 returning defaultColor
+    val activeZoneColor = getZoneColor(currentHeartRate ?: 0, MAX_HEART_RATE)
+
+    // Zone color and progress depend on animation enabled AND a valid HR
+    val displayActive = isAnimationEnabled && currentHeartRate != null
+    val zoneColor = if (displayActive) activeZoneColor else defaultColor
+    val progress = if (displayActive) {
+        ((currentHeartRate ?: 0).toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
+    } else 0f
+
 
     val infiniteTransition = rememberInfiniteTransition(label = "Heartbeat")
 
+    // Heart scale animation depends only on isAnimationEnabled
     val heartScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = if (isAnimationEnabled) 1.2f else 1f,
@@ -139,7 +169,8 @@ fun HeartRateScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$currentHeartRate",
+                        // Display "--" if currentHeartRate is null, otherwise the number
+                        text = currentHeartRate?.toString() ?: "--",
                         color = Color.White,
                         fontSize = 52.sp,
                         fontWeight = FontWeight.Bold
@@ -151,14 +182,16 @@ fun HeartRateScreen(
                         Icon(
                             imageVector = Icons.Filled.Favorite,
                             contentDescription = "Heart Rate Zone",
+                            // Icon color reflects active state
                             tint = zoneColor,
                             modifier = Modifier
                                 .size(20.dp)
-                                .scale(heartScale)
+                                .scale(heartScale) // Scale animation runs independently based on isAnimationEnabled
                         )
                         Text(
                             text = "bpm",
-                            color = Color.White,
+                            // Hide bpm text if HR is null
+                            color = if (currentHeartRate != null) Color.White else Color.Transparent,
                             fontSize = 14.sp
                         )
                     }
