@@ -18,10 +18,11 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import kotlinx.coroutines.delay
 
-
 private const val MAX_HEART_RATE = 190
 private const val SIMULATION_DELAY_MS = 2000L
 
+// Zone colors based on:
+// https://www8.garmin.com/manuals/webhelp/forerunner225/EN-US/GUID-DA94D501-8DA7-46A4-93D4-34504337272C.html
 private val zone1Color = Color(0xFF89AFDC)
 private val zone2Color = Color(0xFF64BC46)
 private val zone3Color = Color(0xFFF9C018)
@@ -41,7 +42,20 @@ fun getZoneColor(currentHr: Int, maxHr: Int): Color {
     }
 }
 
-private fun formatElapsedTime(totalSeconds: Long): String {
+// Millisecond precision formatter
+private fun formatElapsedTimeMillis(totalMillis: Long): String {
+    if (totalMillis < 0) return "00:00.0"
+    val totalSeconds = totalMillis / 1000
+    val minutes = (totalSeconds / 60) % 60
+    val seconds = totalSeconds % 60
+    val tenths = (totalMillis % 1000) / 100
+    return "%02d:%02d.%d".format(minutes, seconds, tenths)
+}
+
+// Second precision formatter
+private fun formatElapsedTimeSeconds(totalMillis: Long): String {
+    if (totalMillis < 0) return "00:00"
+    val totalSeconds = totalMillis / 1000
     val minutes = (totalSeconds / 60) % 60
     val seconds = totalSeconds % 60
     return "%02d:%02d".format(minutes, seconds)
@@ -51,7 +65,8 @@ private fun formatElapsedTime(totalSeconds: Long): String {
 fun HeartRateScreen(
     isAnimationEnabled: Boolean,
     isTimerRunning: Boolean,
-    elapsedTimeSeconds: Long,
+    elapsedTimeMillis: Long,
+    showMilliseconds: Boolean,
     onStopTimer: () -> Unit
 ) {
     var currentHeartRate by remember { mutableStateOf(75) }
@@ -129,9 +144,14 @@ fun HeartRateScreen(
                 }
             }
 
+            // Display the timer text conditionally
             if (isTimerRunning) {
                 Text(
-                    text = formatElapsedTime(elapsedTimeSeconds),
+                    text = if (showMilliseconds) {
+                        formatElapsedTimeMillis(elapsedTimeMillis)
+                    } else {
+                        formatElapsedTimeSeconds(elapsedTimeMillis)
+                    },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 12.dp),
