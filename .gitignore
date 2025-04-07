@@ -1,4 +1,5 @@
 *.iml
+.env
 .gradle/
 /local.properties
 /.idea/caches
@@ -14,3 +15,4 @@
 .cxx
 local.properties
 .idea/
+node_modules
