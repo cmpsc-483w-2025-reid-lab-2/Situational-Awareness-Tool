@@ -99,7 +99,7 @@ fun HeartRateScreen(
 ) {
     // Use nullable Int? to represent the absence of a value when simulation is off
     var currentHeartRate by remember { mutableStateOf<Int?>(null) }
-    val allowedHeartRate = listOf(65, 80, 95, 110, 120, 140, 160, 180)
+    val allowedHeartRate = listOf(160, 180)
 
     val context = LocalContext.current
     val vibrator = remember {
@@ -175,7 +175,7 @@ fun HeartRateScreen(
     val currentZone = getZoneNumber(currentHeartRate ?: 0, MAX_HEART_RATE)
 
     // LaunchedEffect for repeating vibration in Zone 4
-    LaunchedEffect(currentZone) {
+    LaunchedEffect(currentZone, isHapticFeedbackEnabled) {
         // Trigger only when moving from a lower zone into zone 4
         if (currentZone == 4 && previousZone < 4) {
             if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) { // Check for null and if vibrator exists
@@ -193,7 +193,7 @@ fun HeartRateScreen(
     }
 
     // LaunchedEffect for repeating vibration while in Zone 5
-    LaunchedEffect(currentZone) {
+    LaunchedEffect(currentZone, isHapticFeedbackEnabled) {
         // Start repeating when zone becomes 5, stop when it's not 5 anymore
         if (currentZone == 5) {
             if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) {
