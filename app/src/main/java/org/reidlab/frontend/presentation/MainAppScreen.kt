@@ -17,6 +17,7 @@ fun MainAppScreen() {
     var isAnimationEnabled by remember { mutableStateOf(true) } // State for animation toggle, default on
     var showMilliseconds by remember { mutableStateOf(false) } // State for millisecond toggle, default off
     var isSimulationActive by remember { mutableStateOf(true) } // State for simulation toggle, default on
+    var isHapticFeedbackEnabled by remember { mutableStateOf(true) } // State for haptic feedback toggle, default on
 
     var isTimerRunning by remember { mutableStateOf(false) }
     var elapsedTimeMillis by remember { mutableStateOf(0L) } // Changed to milliseconds
@@ -54,23 +55,27 @@ fun MainAppScreen() {
         when (page) {
             // Heart Rate Page
             0 -> HeartRateScreen(
-                isAnimationEnabled = isAnimationEnabled,    // Pass animation state
-                isTimerRunning = isTimerRunning,            // Pass Timer state
-                elapsedTimeMillis = elapsedTimeMillis,      // Pass milliseconds
-                showMilliseconds = showMilliseconds,        // Pass toggle state
-                isSimulationActive = isSimulationActive,    // Pass simulation state
+                isAnimationEnabled = isAnimationEnabled,           // Pass animation state
+                isTimerRunning = isTimerRunning,                   // Pass Timer state
+                elapsedTimeMillis = elapsedTimeMillis,             // Pass milliseconds
+                isHapticFeedbackEnabled = isHapticFeedbackEnabled, // Pass haptic feedback
+                showMilliseconds = showMilliseconds,               // Pass toggle state
+                isSimulationActive = isSimulationActive,           // Pass simulation state
                 onStopTimer = stopTimer
             )
             // Settings Page
             1 -> SettingsScreen(
-                isAnimationEnabled = isAnimationEnabled,         // Pass current state
-                onToggleAnimation = { isAnimationEnabled = it }, // Pass lambda to update state
+                isAnimationEnabled = isAnimationEnabled,                   // Pass current state
+                onToggleAnimation = { isAnimationEnabled = it },           // Pass lambda to update state
 
-                showMilliseconds = showMilliseconds,              // Pass current state
-                onToggleMilliseconds = { showMilliseconds = it }, // Pass lambda to update state
+                showMilliseconds = showMilliseconds,                       // Pass current state
+                onToggleMilliseconds = { showMilliseconds = it },          // Pass lambda to update state
 
-                isSimulationActive = isSimulationActive,          // Pass current simulation state
-                onToggleSimulation = { isSimulationActive = it }, // Pass lambda to update simulation state
+                isHapticFeedbackEnabled = isHapticFeedbackEnabled,         // Pass current state
+                onToggleHapticFeedback = { isHapticFeedbackEnabled = it }, // Pass lambda to update state
+
+                isSimulationActive = isSimulationActive,                    // Pass current simulation state
+                onToggleSimulation = { isSimulationActive = it },           // Pass lambda to update simulation state
 
                 isTimerRunning = isTimerRunning,
                 onStartTimer = startTimer,

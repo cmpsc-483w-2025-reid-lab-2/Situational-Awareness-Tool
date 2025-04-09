@@ -93,12 +93,13 @@ fun HeartRateScreen(
     isTimerRunning: Boolean,
     elapsedTimeMillis: Long,
     showMilliseconds: Boolean,
+    isHapticFeedbackEnabled: Boolean,
     isSimulationActive: Boolean, // New parameter for the toggle state
     onStopTimer: () -> Unit
 ) {
     // Use nullable Int? to represent the absence of a value when simulation is off
     var currentHeartRate by remember { mutableStateOf<Int?>(null) }
-    val allowedHeartRate = listOf(59, 80, 95, 110, 120, 130, 140, 150, 160, 180)
+    val allowedHeartRate = listOf(160, 180)
 
     val context = LocalContext.current
     val vibrator = remember {
@@ -177,7 +178,7 @@ fun HeartRateScreen(
     LaunchedEffect(currentZone) {
         // Trigger only when moving from a lower zone into zone 4
         if (currentZone == 4 && previousZone < 4) {
-            if (vibrator?.hasVibrator() == true) { // Check for null and if vibrator exists
+            if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) { // Check for null and if vibrator exists
                 while (isActive) {
                     // Create a short vibration pattern
                     val effect = VibrationEffect.createWaveform(longArrayOf(0, 150, 100, 150), -1)
@@ -195,7 +196,7 @@ fun HeartRateScreen(
     LaunchedEffect(currentZone) {
         // Start repeating when zone becomes 5, stop when it's not 5 anymore
         if (currentZone == 5) {
-            if (vibrator?.hasVibrator() == true) {
+            if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) {
                 while (isActive) {
                     // Create a short vibration pattern (e.g., two short buzzes)
                     val effect = VibrationEffect.createWaveform(longArrayOf(0, 150, 100, 150), -1)
