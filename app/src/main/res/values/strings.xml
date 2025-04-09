@@ -4,5 +4,5 @@
     <string name="eula_body">The App may collect personal data, including but not limited to heart rate data and health-related information, which will be processed according to the Company\'s Privacy Policy By using the App, you consent to the collection and use of this data as described in the Privacy Policy. You can access and modify your data settings at any time through the App.
         Find more at: bit.ly/zdfq8A</string>
     <string name="author_name">REID Lab Team</string>
-    <string name="app_version">v0.1.6</string>
+    <string name="app_version">v0.1.7</string>
 </resources>
