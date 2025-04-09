@@ -1,12 +1,16 @@
 package org.reidlab.frontend.presentation
 
+import android.content.Context
+import android.os.VibrationEffect
+import android.os.Vibrator
+import androidx.compose.ui.platform.LocalContext
+
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.FastOutSlowInEasing
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -51,6 +55,19 @@ fun getZoneColor(currentHr: Int, maxHr: Int): Color {
     }
 }
 
+// Obtain current zone number for vibration
+fun getZoneNumber(currentHr: Int, maxHr: Int): Int {
+    if (currentHr <= 0 || maxHr <= 0) return 0 // Zone 0 for invalid HR
+    val percentage = (currentHr.toFloat() / maxHr * 100).toInt()
+    return when {
+        percentage <= 59 -> 1
+        percentage <= 69 -> 2
+        percentage <= 79 -> 3
+        percentage <= 89 -> 4
+        else -> 5
+    }
+}
+
 // Millisecond precision formatter
 private fun formatElapsedTimeMillis(totalMillis: Long): String {
     if (totalMillis < 0) return "00:00.0"
@@ -76,12 +93,22 @@ fun HeartRateScreen(
     isTimerRunning: Boolean,
     elapsedTimeMillis: Long,
     showMilliseconds: Boolean,
+    isHapticFeedbackEnabled: Boolean,
     isSimulationActive: Boolean, // New parameter for the toggle state
     onStopTimer: () -> Unit
 ) {
     // Use nullable Int? to represent the absence of a value when simulation is off
     var currentHeartRate by remember { mutableStateOf<Int?>(null) }
-    val allowedHeartRate = listOf(59, 80, 95, 110, 120, 130, 140, 150, 160, 180)
+    val allowedHeartRate = listOf(160, 180)
+
+    val context = LocalContext.current
+    val vibrator = remember {
+        // Use context.getSystemService with type casting
+        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator? // Use nullable type for safety
+    }
+
+    // State to track previous zone for detecting entry
+    var previousZone by remember { mutableStateOf(0) }
 
     // Relaunch the effect whenever isSimulationActive changes
     LaunchedEffect(isSimulationActive) {
@@ -142,6 +169,44 @@ fun HeartRateScreen(
             // If simulation is not active (or becomes inactive), set heart rate to null
             currentHeartRate = null
         }
+    }
+
+    // Calculate current zone number (0 if HR is null)
+    val currentZone = getZoneNumber(currentHeartRate ?: 0, MAX_HEART_RATE)
+
+    // LaunchedEffect for repeating vibration in Zone 4
+    LaunchedEffect(currentZone, isHapticFeedbackEnabled) {
+        // Trigger only when moving from a lower zone into zone 4
+        if (currentZone == 4 && previousZone < 4) {
+            if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) { // Check for null and if vibrator exists
+                while (isActive) {
+                    // Create a short vibration pattern
+                    val effect = VibrationEffect.createWaveform(longArrayOf(0, 150, 100, 150), -1)
+                    vibrator.vibrate(effect)
+                    // Wait for a defined interval before the next warning vibration
+                    delay(950L)
+                }
+            }
+        }
+        // Update previous zone *after* the check for next comparison
+        previousZone = currentZone
+    }
+
+    // LaunchedEffect for repeating vibration while in Zone 5
+    LaunchedEffect(currentZone, isHapticFeedbackEnabled) {
+        // Start repeating when zone becomes 5, stop when it's not 5 anymore
+        if (currentZone == 5) {
+            if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) {
+                while (isActive) {
+                    // Create a short vibration pattern (e.g., two short buzzes)
+                    val effect = VibrationEffect.createWaveform(longArrayOf(0, 150, 100, 150), -1)
+                    vibrator.vibrate(effect)
+                    // Wait for a defined interval before the next warning vibration
+                    delay(450L)
+                }
+            }
+        }
+        // When currentZone changes from 5, vibration stops
     }
 
     // Use currentHeartRate ?: 0 to safely handle the null case for calculations

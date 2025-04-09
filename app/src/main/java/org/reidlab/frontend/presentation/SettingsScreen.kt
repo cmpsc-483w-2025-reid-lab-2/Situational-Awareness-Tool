@@ -5,7 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.* // Provides Scaffold, TimeText, etc.
+import androidx.wear.compose.material.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
@@ -30,7 +30,9 @@ fun SettingsScreen(
     showMilliseconds: Boolean,
     onToggleMilliseconds: (Boolean) -> Unit,
     isSimulationActive: Boolean,
-    onToggleSimulation: (Boolean) -> Unit
+    onToggleSimulation: (Boolean) -> Unit,
+    isHapticFeedbackEnabled: Boolean,
+    onToggleHapticFeedback: (Boolean) -> Unit
 ) {
     // Add ScrollState and FocusRequester
     val scrollState = rememberScrollState()
@@ -89,7 +91,7 @@ fun SettingsScreen(
                 checked = showMilliseconds,
                 // Use the correct callback function when the chip is toggled
                 onCheckedChange = onToggleMilliseconds,
-                label = { Text("Show milliseconds") },
+                label = { Text("Show Milliseconds") },
                 toggleControl = {
                     Switch(
                         // Also use the correct state variable here for the Switch visual
@@ -99,7 +101,35 @@ fun SettingsScreen(
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = Color(0xFFAAE0FA), // Or your desired 'on' color
                             checkedThumbColor = Color.White,
-                            // Optional: Define colors for the 'off' state too
+                            uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
+                            uncheckedThumbColor = MaterialTheme.colors.surface
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ToggleChipDefaults.toggleChipColors(
+                    checkedStartBackgroundColor = solidChipBackgroundColor, // Solid color when checked
+                    checkedEndBackgroundColor = solidChipBackgroundColor,   // Solid color when checked
+                    uncheckedStartBackgroundColor = solidChipBackgroundColor, // Solid color when unchecked
+                    uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
+                )
+            )
+            // Toggle Chip (Enable Haptic Feedback)
+            ToggleChip(
+                // Use the new haptic feedback state
+                checked = isHapticFeedbackEnabled,
+                // Use the correct callback function when the chip is toggled
+                onCheckedChange = onToggleHapticFeedback,
+                label = { Text("Enable Haptic Feedback") },
+                toggleControl = {
+                    Switch(
+                        // Also use the correct state variable here for the Switch visual
+                        checked = isHapticFeedbackEnabled,
+                        // Keep this null - the ToggleChip's onCheckedChange handles the logic
+                        onCheckedChange = null,
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = Color(0xFFAAE0FA),
+                            checkedThumbColor = Color.White,
                             uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
                             uncheckedThumbColor = MaterialTheme.colors.surface
                         )
@@ -173,7 +203,6 @@ fun SettingsScreen(
             )
             // Add some end padding so the button isn't cut off
             Spacer(Modifier.height(35.dp))
-            // End Content Items
-        } // End Column
-    } // End Scaffold
+        }
+    }
 }
