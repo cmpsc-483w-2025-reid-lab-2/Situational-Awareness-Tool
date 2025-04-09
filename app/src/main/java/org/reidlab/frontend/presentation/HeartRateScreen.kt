@@ -99,7 +99,10 @@ fun HeartRateScreen(
 ) {
     // Use nullable Int? to represent the absence of a value when simulation is off
     var currentHeartRate by remember { mutableStateOf<Int?>(null) }
-    val allowedHeartRate = listOf(160, 180)
+    // Normal range of values to go through showing all the zones
+    val allowedHeartRate = listOf(65, 80, 95, 110, 120, 140, 160, 180)
+    // Test for haptic feedback i.e., Zone 4 & 5
+    // val allowedHeartRate = listOf(160, 180)
 
     val context = LocalContext.current
     val vibrator = remember {
