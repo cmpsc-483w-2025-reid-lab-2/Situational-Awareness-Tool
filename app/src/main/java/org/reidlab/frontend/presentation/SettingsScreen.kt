@@ -5,7 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.* // Provides Scaffold, TimeText, etc.
+import androidx.wear.compose.material.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
@@ -91,7 +91,7 @@ fun SettingsScreen(
                 checked = showMilliseconds,
                 // Use the correct callback function when the chip is toggled
                 onCheckedChange = onToggleMilliseconds,
-                label = { Text("Show milliseconds") },
+                label = { Text("Show Milliseconds") },
                 toggleControl = {
                     Switch(
                         // Also use the correct state variable here for the Switch visual
@@ -128,7 +128,7 @@ fun SettingsScreen(
                         // Keep this null - the ToggleChip's onCheckedChange handles the logic
                         onCheckedChange = null,
                         colors = SwitchDefaults.colors(
-                            checkedTrackColor = Color(0xFFAAE0FA), // Or your desired 'on' color
+                            checkedTrackColor = Color(0xFFAAE0FA),
                             checkedThumbColor = Color.White,
                             uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
                             uncheckedThumbColor = MaterialTheme.colors.surface
@@ -203,7 +203,6 @@ fun SettingsScreen(
             )
             // Add some end padding so the button isn't cut off
             Spacer(Modifier.height(35.dp))
-            // End Content Items
-        } // End Column
-    } // End Scaffold
+        }
+    }
 }
