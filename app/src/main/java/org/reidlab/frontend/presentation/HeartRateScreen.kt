@@ -1,10 +1,12 @@
 package org.reidlab.frontend.presentation
 
+import java.time.LocalDate
+import java.time.Period
+
 import android.content.Context
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.ui.platform.LocalContext
-
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -34,6 +36,8 @@ import kotlinx.coroutines.isActive
 
 private const val MAX_HEART_RATE = 190
 private const val SIMULATION_DELAY_MS = 1000L
+private const val DEFAULT_MAX_HEART_RATE = 190 // Default if age is unknown
+private const val TAG = "HeartRateScreen"
 
 // Zone colors based on:
 // https://www8.garmin.com/manuals/webhelp/forerunner225/EN-US/GUID-DA94D501-8DA7-46A4-93D4-34504337272C.html
@@ -97,7 +101,8 @@ fun HeartRateScreen(
     showMilliseconds: Boolean,
     isHapticFeedbackEnabled: Boolean,
     isSimulationActive: Boolean,
-    onStopTimer: () -> Unit
+    onStopTimer: () -> Unit,
+    birthDate: LocalDate?
 ) {
     // Collect State from ViewModel
     val uiState by measureDataViewModel.uiState
@@ -108,8 +113,19 @@ fun HeartRateScreen(
     // Simulation State and Logic
     var currentHeartRate by remember { mutableStateOf<Int?>(null) } // Simulated HR (Int?)
     val allowedHeartRate = listOf(65, 80, 95, 110, 120, 140, 160, 180)
-
     // Relaunch simulation effect whenever isSimulationActive changes
+    // Test for haptic feedback i.e., Zone 4 & 5
+    // val allowedHeartRate = listOf(120, 160, 200)
+
+    val age = remember(birthDate) { // Recalculate only if birthDate changes
+        birthDate?.let { Period.between(it, LocalDate.now()).years }
+    }
+    val maxHeartRate = remember(age) { // Recalculate only if age changes
+        // Use 220 - age formula, provide default if age is unknown
+        if (age != null && age > 0) 220 - age else DEFAULT_MAX_HEART_RATE
+    }
+
+    // Relaunch the effect whenever isSimulationActive changes
     LaunchedEffect(isSimulationActive) {
         if (isSimulationActive) {
             var currentIndex = 0
