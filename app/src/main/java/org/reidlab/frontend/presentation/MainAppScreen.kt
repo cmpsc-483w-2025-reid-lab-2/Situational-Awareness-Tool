@@ -5,12 +5,25 @@ import com.google.accompanist.pager.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun MainAppScreen() {
+fun MainAppScreen(birthDateString: String?) {
     val pagerState = rememberPagerState(initialPage = 0)
     val scope = rememberCoroutineScope()
+
+    val birthDate: LocalDate? = remember(birthDateString) {
+        birthDateString?.let { // If string is not null
+            try {
+                LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE)
+            } catch (e: DateTimeParseException) {
+                null // Handle invalid stored string format gracefully
+            }
+        }
+    }
 
     // State Variables
     // TODO: Consider loading initial values for toggles from SharedPreferences
@@ -61,7 +74,8 @@ fun MainAppScreen() {
                 isHapticFeedbackEnabled = isHapticFeedbackEnabled, // Pass haptic feedback
                 showMilliseconds = showMilliseconds,               // Pass toggle state
                 isSimulationActive = isSimulationActive,           // Pass simulation state
-                onStopTimer = stopTimer
+                onStopTimer = stopTimer,
+                birthDate = birthDate
             )
             // Settings Page
             1 -> SettingsScreen(
