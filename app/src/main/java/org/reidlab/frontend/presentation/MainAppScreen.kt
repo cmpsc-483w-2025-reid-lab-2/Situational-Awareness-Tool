@@ -7,10 +7,13 @@ import com.google.accompanist.pager.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.reidlab.frontend.data.HealthServicesRepository
-
+import androidx.compose.runtime.rememberCoroutineScope
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @Composable
-fun MainAppScreen() {
+fun MainAppScreen(birthDateString: String?) {
     val pagerState = rememberPagerState(initialPage = 0)
     val scope = rememberCoroutineScope()
 
@@ -23,17 +26,28 @@ fun MainAppScreen() {
     val measureDataViewModel: MeasureDataViewModel = viewModel(factory = viewModelFactory)
 
 
-    // State Variables (remain the same)
+    // State Variables
+    // TODO: Consider loading initial values for toggles from SharedPreferences
     var isAnimationEnabled by remember { mutableStateOf(true) }
     var showMilliseconds by remember { mutableStateOf(false) }
     var isSimulationActive by remember { mutableStateOf(false) }
     var isHapticFeedbackEnabled by remember { mutableStateOf(true) }
-
     var isTimerRunning by remember { mutableStateOf(false) }
     var elapsedTimeMillis by remember { mutableLongStateOf(0L) }
     var startTimeMillis by remember { mutableStateOf<Long?>(null) }
 
-    // Timer Logic (remains the same)
+
+    val birthDate: LocalDate? = remember(birthDateString) {
+        birthDateString?.let { // If string is not null
+            try {
+                LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE)
+            } catch (e: DateTimeParseException) {
+                null // Handle invalid stored string format gracefully
+            }
+        }
+    }
+
+    // Timer Logic
     LaunchedEffect(key1 = isTimerRunning) {
         if (isTimerRunning) {
             val start = startTimeMillis ?: System.currentTimeMillis().also { startTimeMillis = it }
@@ -44,7 +58,7 @@ fun MainAppScreen() {
         }
     }
 
-    // Timer Control Lambdas (remain the same)
+    // Timer Control Lambdas
     val startTimer: () -> Unit = {
         startTimeMillis = System.currentTimeMillis()
         elapsedTimeMillis = 0L
@@ -73,7 +87,8 @@ fun MainAppScreen() {
                 isHapticFeedbackEnabled = isHapticFeedbackEnabled,
                 showMilliseconds = showMilliseconds,
                 isSimulationActive = isSimulationActive,
-                onStopTimer = stopTimer
+                onStopTimer = stopTimer,
+                birthDate = birthDate
             )
             // Settings Page (remains the same)
             1 -> SettingsScreen(
