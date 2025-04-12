@@ -1,20 +1,29 @@
 package org.reidlab.frontend.presentation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.MaterialTheme
-import com.google.android.horologist.composables.DatePicker
+import androidx.wear.compose.material.dialog.Dialog
 import java.time.LocalDate
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
+import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Text
+import com.google.android.horologist.composables.DatePicker
 
 @Composable
 fun BirthdayScreen(
     onDateSelectedAndValid: (LocalDate) -> Unit // Callback with the valid selected date
 ) {
+    var showDialog by remember { mutableStateOf(true) }
     // Date Calculation
     val today = LocalDate.now()
     val maxDate = remember { today.minusYears(18) }
@@ -42,24 +51,80 @@ fun BirthdayScreen(
         secondaryVariant = pickerPrimaryBlueVariant,
     )
 
-    // UI Layout
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 25.dp, end = 25.dp, top = 4.dp, bottom = 10.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    // --- Initial Dialog ---
+    Dialog(
+        showDialog = showDialog,
+        onDismissRequest = { /* Consider behavior */ }
     ) {
-        Spacer(Modifier.height(2.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                // Adjust padding if needed, especially vertical if text wraps more
+                .padding(vertical = 10.dp, horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            // Adjust spacing between title, body, and button
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = "Input Your Birthday", // New title
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                style = MaterialTheme.typography.title3,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier.fillMaxWidth() // Removed top padding
+            )
 
-        // Apply the highly customized theme colors *only* to the DatePicker
-        MaterialTheme(colors = pickerSpecificColors) {
-            DatePicker(
-                onDateConfirm = onDateSelectedAndValid,
-                date = defaultDate,
-                fromDate = minDate,
-                toDate = maxDate
-             )
+            // Added Body Text
+            Text(
+                text = "Your birth date helps calculate accurate heart rates and heart rate zones.",
+                textAlign = TextAlign.Start,
+                style = MaterialTheme.typography.body2, // Use a smaller style for body
+                color = MaterialTheme.colors.onSurfaceVariant, // Slightly different color for contrast
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Button(
+                onClick = { showDialog = false },
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFFAAE0FA)
+                ),
+                modifier = Modifier.size(ButtonDefaults.DefaultButtonSize)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Accept",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .wrapContentSize(align = Alignment.Center)
+                )
+            }
+        }
+    }
+
+
+    // UI Layout
+    if (!showDialog) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 25.dp, end = 25.dp, top = 4.dp, bottom = 10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(2.dp))
+
+            // Apply the highly customized theme colors *only* to the DatePicker
+            MaterialTheme(colors = pickerSpecificColors) {
+                DatePicker(
+                    onDateConfirm = onDateSelectedAndValid,
+                    date = defaultDate,
+                    fromDate = minDate,
+                    toDate = maxDate
+                )
+            }
         }
     }
 }

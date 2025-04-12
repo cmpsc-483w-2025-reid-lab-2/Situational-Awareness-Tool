@@ -26,6 +26,7 @@ accompanist-permissions = "0.36.0"
 lifecycleViewmodelKtx = "2.8.7"
 composeMaterial3 = "1.0.0-alpha36"
 horologist = "0.5.26"
+composeMaterialVersion = "1.3.1"
 
 [libraries]
 compose-materialIconsCore = { group = "androidx.compose.material", name = "material-icons-core" } # Version from BOM or version.ref
@@ -63,6 +64,7 @@ guava = { module = "com.google.guava:guava", version.ref = "guava" }
 concurrent-futures = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrent-futures" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+compose-material-v131 = { module = "androidx.wear.compose:compose-material", version.ref = "composeMaterialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
