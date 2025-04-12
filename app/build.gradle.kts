@@ -61,6 +61,14 @@ dependencies {
     implementation(libs.watchface.complications.data.source.ktx)
     implementation(libs.material3.android)
     implementation(libs.compose.material3)
+    // Health Services
+    implementation(libs.androidx.health.services.client)
+    // Used to bridge between Futures and coroutines
+    implementation(libs.guava)
+    implementation(libs.concurrent.futures)
+    // Used for permissions
+    implementation(libs.accompanist.permissions)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
