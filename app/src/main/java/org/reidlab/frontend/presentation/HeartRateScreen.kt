@@ -32,7 +32,6 @@ import androidx.wear.compose.material.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive // Import isActive
 
-private const val MAX_HEART_RATE = 190
 private const val SIMULATION_DELAY_MS = 1000L
 private const val DEFAULT_MAX_HEART_RATE = 190 // Default if age is unknown
 private const val TAG = "HeartRateScreen"
@@ -193,7 +192,7 @@ fun HeartRateScreen(
     }
 
     // Calculate current zone number (0 if HR is null)
-    val currentZone = getZoneNumber(currentHeartRate ?: 0, MAX_HEART_RATE)
+    val currentZone = getZoneNumber(currentHeartRate ?: 0, maxHeartRate)
 
     // LaunchedEffect for repeating vibration in Zone 4
     LaunchedEffect(currentZone, isHapticFeedbackEnabled) {
@@ -232,13 +231,13 @@ fun HeartRateScreen(
 
     // Use currentHeartRate ?: 0 to safely handle the null case for calculations
     // getZoneColor already handles <= 0 returning defaultColor
-    val activeZoneColor = getZoneColor(currentHeartRate ?: 0, MAX_HEART_RATE)
+    val activeZoneColor = getZoneColor(currentHeartRate ?: 0, maxHeartRate)
 
     // Zone color and progress depend on animation enabled AND a valid HR
     val displayActive = isAnimationEnabled && currentHeartRate != null
     val zoneColor = if (displayActive) activeZoneColor else defaultColor
     val progress = if (displayActive) {
-        ((currentHeartRate ?: 0).toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
+        ((currentHeartRate ?: 0).toFloat() / maxHeartRate).coerceIn(0f, 1f)
     } else 0f
 
 
