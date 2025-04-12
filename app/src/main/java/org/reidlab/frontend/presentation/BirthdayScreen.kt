@@ -6,10 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
 import com.google.android.horologist.composables.DatePicker
 import java.time.LocalDate
 
@@ -48,15 +46,10 @@ fun BirthdayScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 8.dp, end = 4.dp, top = 25.dp, bottom = 15.dp),
+            .padding(start = 25.dp, end = 25.dp, top = 4.dp, bottom = 10.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Select Birth Date",
-            style = MaterialTheme.typography.title3,
-            textAlign = TextAlign.Center,
-        )
         Spacer(Modifier.height(2.dp))
 
         // Apply the highly customized theme colors *only* to the DatePicker

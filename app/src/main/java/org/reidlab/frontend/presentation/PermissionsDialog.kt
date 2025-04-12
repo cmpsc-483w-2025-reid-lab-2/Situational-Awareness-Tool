@@ -64,7 +64,7 @@ fun GrantDenyButtons(onGrant: () -> Unit, onDeny: () -> Unit) {
 fun PermissionsScreen(
     onPermissionGranted: () -> Unit,
     onPermissionDenied: () -> Unit, // Called if user presses Deny button OR denies in system dialog
-    headerTextSize: TextUnit = 16.sp,
+    headerTextSize: TextUnit = 16.5.sp,
     bodyTextSize: TextUnit = 13.sp
 ) {
     val permission = Manifest.permission.BODY_SENSORS
@@ -106,7 +106,7 @@ fun PermissionsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 10.dp)
+                .padding(horizontal = 24.dp, vertical = 0.dp)
                 .verticalScroll(scrollState)
                 .rotaryScrollable(
                     behavior = RotaryScrollableDefaults.behavior(scrollableState = scrollState),
@@ -129,11 +129,7 @@ fun PermissionsScreen(
             )
 
             // Modify the text or UI if permissionState.status.shouldShowRationale is true
-            val explanationText = if (permissionState.status.shouldShowRationale) {
-                stringResource(R.string.permission_body) + "\n\nPlease grant the permission for the app to function correctly." // Example modification
-            } else {
-                stringResource(R.string.permission_body)
-            }
+            val explanationText = stringResource(R.string.permission_body)
 
             // Body Text explaining why permission is needed
             Text(

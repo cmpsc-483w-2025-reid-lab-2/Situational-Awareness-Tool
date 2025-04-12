@@ -110,7 +110,7 @@ fun LicenseAgreementScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 10.dp)
+            .padding(horizontal = 24.dp, vertical = 0.dp)
             // Order might matter, often input modifiers wrap scroll:
             .verticalScroll(scrollState) // Still needed to *do* the scrolling
             .rotaryScrollable( // Apply rotaryScrollable *after* verticalScroll
@@ -148,20 +148,5 @@ fun LicenseAgreementScreen(
 
         AcceptDeclineButtons(onAccept = onAccept, onDecline = onDecline)
         Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-// Previews
-@Composable
-fun PreviewAcceptDeclineButtons() {
-    CustomTheme {
-        AcceptDeclineButtons(onAccept = {}, onDecline = {})
-    }
-}
-
-@Composable
-fun PreviewLicenseAgreement() {
-    CustomTheme {
-        LicenseAgreementScreen(onAccept = {}, onDecline = {})
     }
 }
