@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Frontend - HRM</string>
+    <string name="permission_header">Sensor Access Required</string>
+    <string name="permission_body">To provide heart rate tracking and insights during your activity, this app needs access to your body sensors. Please grant permission to continue.</string>
+    <string name="grant_permission">Grant</string>
+    <string name="deny_permission">Deny</string>
     <string name="eula_header">End User License Agreement</string>
     <string name="eula_body">The App may collect personal data, including but not limited to heart rate data and health-related information, which will be processed according to the Company\'s Privacy Policy By using the App, you consent to the collection and use of this data as described in the Privacy Policy. You can access and modify your data settings at any time through the App.
         Find more at: bit.ly/zdfq8A</string>

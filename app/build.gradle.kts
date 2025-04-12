@@ -30,6 +30,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -40,7 +41,11 @@ android {
 }
 
 dependencies {
-
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation(libs.compose.material)
+    implementation(libs.horologist.composables)
+    implementation(libs.compose.materialIconsCore)
+    implementation(libs.compose.materialIconsExtended)
     implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
     implementation(libs.play.services.wearable)
@@ -61,6 +66,14 @@ dependencies {
     implementation(libs.watchface.complications.data.source.ktx)
     implementation(libs.material3.android)
     implementation(libs.compose.material3)
+    // Health Services
+    implementation(libs.androidx.health.services.client)
+    // Used to bridge between Futures and coroutines
+    implementation(libs.guava)
+    implementation(libs.concurrent.futures)
+    // Used for permissions
+    implementation(libs.accompanist.permissions)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)

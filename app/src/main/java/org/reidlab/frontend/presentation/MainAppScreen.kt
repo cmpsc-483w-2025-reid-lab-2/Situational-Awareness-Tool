@@ -1,53 +1,76 @@
 package org.reidlab.frontend.presentation
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.reidlab.frontend.data.HealthServicesRepository
 import androidx.compose.runtime.rememberCoroutineScope
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun MainAppScreen() {
+fun MainAppScreen(birthDateString: String?) {
     val pagerState = rememberPagerState(initialPage = 0)
     val scope = rememberCoroutineScope()
 
+    // ViewModel Setup
+    val context = LocalContext.current
+    // Remember repository and factory to avoid recreation on recomposition
+    val healthServicesRepository = remember { HealthServicesRepository(context) }
+    val viewModelFactory = remember { MeasureDataViewModelFactory(healthServicesRepository) }
+    // Obtain the ViewModel instance
+    val measureDataViewModel: MeasureDataViewModel = viewModel(factory = viewModelFactory)
+
+
     // State Variables
     // TODO: Consider loading initial values for toggles from SharedPreferences
-    var isAnimationEnabled by remember { mutableStateOf(true) } // State for animation toggle, default on
-    var showMilliseconds by remember { mutableStateOf(false) } // State for millisecond toggle, default off
-    var isSimulationActive by remember { mutableStateOf(true) } // State for simulation toggle, default on
-    var isHapticFeedbackEnabled by remember { mutableStateOf(true) } // State for haptic feedback toggle, default on
-
+    var isAnimationEnabled by remember { mutableStateOf(true) }
+    var showMilliseconds by remember { mutableStateOf(false) }
+    var isSimulationActive by remember { mutableStateOf(false) }
+    var isHapticFeedbackEnabled by remember { mutableStateOf(true) }
     var isTimerRunning by remember { mutableStateOf(false) }
-    var elapsedTimeMillis by remember { mutableStateOf(0L) } // Changed to milliseconds
-    var startTimeMillis by remember { mutableStateOf<Long?>(null) } // To store timer start time
+    var elapsedTimeMillis by remember { mutableLongStateOf(0L) }
+    var startTimeMillis by remember { mutableStateOf<Long?>(null) }
+
+
+    val birthDate: LocalDate? = remember(birthDateString) {
+        birthDateString?.let { // If string is not null
+            try {
+                LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE)
+            } catch (e: DateTimeParseException) {
+                null // Handle invalid stored string format gracefully
+            }
+        }
+    }
 
     // Timer Logic
     LaunchedEffect(key1 = isTimerRunning) {
         if (isTimerRunning) {
-            val start = startTimeMillis ?: System.currentTimeMillis().also { startTimeMillis = it } // Get start time, record if missing
-            while (isTimerRunning) { // Loop only while running
+            val start = startTimeMillis ?: System.currentTimeMillis().also { startTimeMillis = it }
+            while (isTimerRunning) {
                 elapsedTimeMillis = System.currentTimeMillis() - start
-                delay(100L) // Update frequency for the display (e.g., every 100ms)
+                delay(100L)
             }
         }
     }
 
     // Timer Control Lambdas
     val startTimer: () -> Unit = {
-        startTimeMillis = System.currentTimeMillis() // Record start time
-        elapsedTimeMillis = 0L // Reset elapsed display
+        startTimeMillis = System.currentTimeMillis()
+        elapsedTimeMillis = 0L
         isTimerRunning = true
-        // Navigate back to HeartRateScreen when starting timer
         scope.launch {
             pagerState.animateScrollToPage(0)
         }
     }
 
+    // A value for stopTimer()
     val stopTimer: () -> Unit = {
         isTimerRunning = false
-        // startTimeMillis = null
     }
 
     // Main UI with Pager
@@ -55,27 +78,31 @@ fun MainAppScreen() {
         when (page) {
             // Heart Rate Page
             0 -> HeartRateScreen(
-                isAnimationEnabled = isAnimationEnabled,           // Pass animation state
-                isTimerRunning = isTimerRunning,                   // Pass Timer state
-                elapsedTimeMillis = elapsedTimeMillis,             // Pass milliseconds
-                isHapticFeedbackEnabled = isHapticFeedbackEnabled, // Pass haptic feedback
-                showMilliseconds = showMilliseconds,               // Pass toggle state
-                isSimulationActive = isSimulationActive,           // Pass simulation state
-                onStopTimer = stopTimer
+                // Pass the ViewModel instance
+                measureDataViewModel = measureDataViewModel,
+                // Other parameters remain the same
+                isAnimationEnabled = isAnimationEnabled,
+                isTimerRunning = isTimerRunning,
+                elapsedTimeMillis = elapsedTimeMillis,
+                isHapticFeedbackEnabled = isHapticFeedbackEnabled,
+                showMilliseconds = showMilliseconds,
+                isSimulationActive = isSimulationActive,
+                onStopTimer = stopTimer,
+                birthDate = birthDate
             )
-            // Settings Page
+            // Settings Page (remains the same)
             1 -> SettingsScreen(
-                isAnimationEnabled = isAnimationEnabled,                   // Pass current state
-                onToggleAnimation = { isAnimationEnabled = it },           // Pass lambda to update state
+                isAnimationEnabled = isAnimationEnabled,
+                onToggleAnimation = { isAnimationEnabled = it },
 
-                showMilliseconds = showMilliseconds,                       // Pass current state
-                onToggleMilliseconds = { showMilliseconds = it },          // Pass lambda to update state
+                showMilliseconds = showMilliseconds,
+                onToggleMilliseconds = { showMilliseconds = it },
 
-                isHapticFeedbackEnabled = isHapticFeedbackEnabled,         // Pass current state
-                onToggleHapticFeedback = { isHapticFeedbackEnabled = it }, // Pass lambda to update state
+                isHapticFeedbackEnabled = isHapticFeedbackEnabled,
+                onToggleHapticFeedback = { isHapticFeedbackEnabled = it },
 
-                isSimulationActive = isSimulationActive,                    // Pass current simulation state
-                onToggleSimulation = { isSimulationActive = it },           // Pass lambda to update simulation state
+                isSimulationActive = isSimulationActive,
+                onToggleSimulation = { isSimulationActive = it },
 
                 isTimerRunning = isTimerRunning,
                 onStartTimer = startTimer,
