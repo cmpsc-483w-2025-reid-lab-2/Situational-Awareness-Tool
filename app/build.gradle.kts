@@ -42,6 +42,7 @@ android {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation(libs.compose.material)
     implementation(libs.horologist.composables)
     implementation(libs.compose.materialIconsCore)
     implementation(libs.compose.materialIconsExtended)

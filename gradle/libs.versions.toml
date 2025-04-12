@@ -1,6 +1,7 @@
 [versions]
 accompanistPagerIndicators = "0.28.0"
 agp = "8.9.1"
+composeMaterialVersion = "1.3.1"
 horologistComposeLayout = "0.2.0"
 kotlin = "2.0.0"
 playServicesWearable = "19.0.0"
@@ -22,6 +23,7 @@ composeMaterial3 = "1.0.0-alpha36"
 horologist = "0.5.26"
 
 [libraries]
+compose-material-v131 = { module = "androidx.wear.compose:compose-material", version.ref = "composeMaterialVersion" }
 compose-materialIconsCore = { group = "androidx.compose.material", name = "material-icons-core" } # Version from BOM or version.ref
 compose-materialIconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" } # Version from BOM or version.ref
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPagerIndicators" }
