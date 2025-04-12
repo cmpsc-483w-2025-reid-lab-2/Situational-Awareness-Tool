@@ -34,9 +34,9 @@ import androidx.wear.compose.material.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
-private const val MAX_HEART_RATE = 190
+private const val maxHeartRate = 190
 private const val SIMULATION_DELAY_MS = 1000L
-private const val DEFAULT_MAX_HEART_RATE = 190 // Default if age is unknown
+private const val DEFAULT_maxHeartRate = 190 // Default if age is unknown
 private const val TAG = "HeartRateScreen"
 
 // Zone colors based on:
@@ -122,7 +122,7 @@ fun HeartRateScreen(
     }
     val maxHeartRate = remember(age) { // Recalculate only if age changes
         // Use 220 - age formula, provide default if age is unknown
-        if (age != null && age > 0) 220 - age else DEFAULT_MAX_HEART_RATE
+        if (age != null && age > 0) 220 - age else DEFAULT_maxHeartRate
     }
 
     // Relaunch the effect whenever isSimulationActive changes
@@ -195,10 +195,10 @@ fun HeartRateScreen(
     // Calculations based on Active HR
     // Use 0 for calculations if activeHrInt is null
     val calcHr = activeHrInt ?: 0
-    val currentZone = getZoneNumber(calcHr, MAX_HEART_RATE)
-    val zoneColor = if (isDataActuallyAvailable) getZoneColor(calcHr, MAX_HEART_RATE) else defaultColor
+    val currentZone = getZoneNumber(calcHr, maxHeartRate)
+    val zoneColor = if (isDataActuallyAvailable) getZoneColor(calcHr, maxHeartRate) else defaultColor
     val progress = if (isDataActuallyAvailable) {
-        (calcHr.toFloat() / MAX_HEART_RATE).coerceIn(0f, 1f)
+        (calcHr.toFloat() / maxHeartRate).coerceIn(0f, 1f)
     } else 0f
 
     // Haptics (React to currentZone derived from active HR)
@@ -206,7 +206,7 @@ fun HeartRateScreen(
         if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) {
             // Trigger vibration based ONLY on zone transitions/state, regardless of source
             if (currentZone == 4 && previousZone < 4) { // Entered Zone 4
-                while (isActive && getZoneNumber(activeHrInt ?: 0, MAX_HEART_RATE) == 4) { // Check zone directly
+                while (isActive && getZoneNumber(activeHrInt ?: 0, maxHeartRate) == 4) { // Check zone directly
                     val effect = VibrationEffect.createWaveform(longArrayOf(0, 150, 100, 150), -1)
                     vibrator.vibrate(effect)
                     delay(950L)
@@ -219,7 +219,7 @@ fun HeartRateScreen(
     LaunchedEffect(currentZone, isHapticFeedbackEnabled) { // Keyed on zone and setting
         if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) {
             if (currentZone == 5) { // Entered or staying in Zone 5
-                while (isActive && getZoneNumber(activeHrInt ?: 0, MAX_HEART_RATE) == 5) { // Check zone directly
+                while (isActive && getZoneNumber(activeHrInt ?: 0, maxHeartRate) == 5) { // Check zone directly
                     val effect = VibrationEffect.createWaveform(longArrayOf(0, 150, 100, 150), -1)
                     vibrator.vibrate(effect)
                     delay(450L)
