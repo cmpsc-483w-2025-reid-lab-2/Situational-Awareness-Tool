@@ -41,43 +41,24 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.compose.material)
     implementation(libs.horologist.composables)
     implementation(libs.compose.materialIconsCore)
     implementation(libs.compose.materialIconsExtended)
-    implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
-    implementation(libs.play.services.wearable)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
     implementation(libs.compose.material)
     implementation(libs.compose.foundation)
-    implementation(libs.wear.tooling.preview)
     implementation(libs.activity.compose)
     implementation(libs.core.splashscreen)
-    implementation(libs.tiles)
-    implementation(libs.tiles.material)
-    implementation(libs.tiles.tooling.preview)
     implementation(libs.horologist.compose.tools)
     implementation(libs.horologist.tiles)
-    implementation(libs.watchface.complications.data.source.ktx)
-    implementation(libs.material3.android)
     implementation(libs.compose.material3)
-    // Health Services
     implementation(libs.androidx.health.services.client)
-    // Used to bridge between Futures and coroutines
-    implementation(libs.guava)
     implementation(libs.concurrent.futures)
-    // Used for permissions
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.ui.test.junit4)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
-    debugImplementation(libs.tiles.tooling)
-
 }
