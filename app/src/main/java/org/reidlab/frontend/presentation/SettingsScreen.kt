@@ -101,8 +101,6 @@ fun SettingsScreen(
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = Color(0xFFAAE0FA), // Or your desired 'on' color
                             checkedThumbColor = Color.White,
-                            uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
-                            uncheckedThumbColor = MaterialTheme.colors.surface
                         )
                     )
                 },
@@ -110,8 +108,6 @@ fun SettingsScreen(
                 colors = ToggleChipDefaults.toggleChipColors(
                     checkedStartBackgroundColor = solidChipBackgroundColor, // Solid color when checked
                     checkedEndBackgroundColor = solidChipBackgroundColor,   // Solid color when checked
-                    uncheckedStartBackgroundColor = solidChipBackgroundColor, // Solid color when unchecked
-                    uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
                 )
             )
             // Toggle Chip (Enable Haptic Feedback)
@@ -130,8 +126,6 @@ fun SettingsScreen(
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = Color(0xFFAAE0FA),
                             checkedThumbColor = Color.White,
-                            uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
-                            uncheckedThumbColor = MaterialTheme.colors.surface
                         )
                     )
                 },
@@ -139,8 +133,6 @@ fun SettingsScreen(
                 colors = ToggleChipDefaults.toggleChipColors(
                     checkedStartBackgroundColor = solidChipBackgroundColor, // Solid color when checked
                     checkedEndBackgroundColor = solidChipBackgroundColor,   // Solid color when checked
-                    uncheckedStartBackgroundColor = solidChipBackgroundColor, // Solid color when unchecked
-                    uncheckedEndBackgroundColor = solidChipBackgroundColor  // Solid color when unchecked
                 )
             )
             // Toggle Chip (Heart Rate Simulation)
@@ -155,8 +147,6 @@ fun SettingsScreen(
                         colors = SwitchDefaults.colors(   // Consistent styling
                             checkedTrackColor = Color(0xFFAAE0FA),
                             checkedThumbColor = Color.White,
-                            uncheckedTrackColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
-                            uncheckedThumbColor = MaterialTheme.colors.surface
                         )
                     )
                 },
