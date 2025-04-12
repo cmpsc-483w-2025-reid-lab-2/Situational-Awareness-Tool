@@ -17,66 +17,56 @@ import java.time.LocalDate
 fun BirthdayScreen(
     onDateSelectedAndValid: (LocalDate) -> Unit // Callback with the valid selected date
 ) {
-    // Calculate date range: 18 years ago to 100 years ago
+    // Date Calculation
     val today = LocalDate.now()
-    // Latest selectable date (must be 18 years old)
     val maxDate = remember { today.minusYears(18) }
-    // Earliest selectable date (e.g., 100 years ago)
     val minDate = remember { today.minusYears(100) }
-    // Default date for picker, can be maxDate or something else reasonable
     val defaultDate = remember {
         val default = LocalDate.of(1990, 1, 1)
-        // Make sure the default is not outside the allowed selectable range
         default.coerceIn(minDate, maxDate)
     }
-    // --- Added: Define Blue Color and Create Local Theme ---
-    // 1. Define the blue color you want for the picker
-    val pickerPrimaryBlue = Color(0xFF8AB4F8) // Example Blue (same as before)
-    // Optional: Define a darker variant if needed by component internals
-    val pickerPrimaryBlueVariant = Color(0xFF4E85F3)
-    // 2. Get the current theme's colors
+
+    // Define Custom Colors
+    val pickerPrimaryBlue = Color(0xffa8e0fa)
+    val pickerPrimaryBlueVariant = Color(0xffa8e0fa)
+
+    // Get Current Theme Colors
     val currentAppColors = MaterialTheme.colors
-    // 3. Create a *new* Colors object based on the current one, overriding primary
+
+    // Override the default colors provided by Horologist library
     val pickerSpecificColors = currentAppColors.copy(
+        // Primary colors (used for main actions like confirm button)
         primary = pickerPrimaryBlue,
-        primaryVariant = pickerPrimaryBlueVariant, // Or just pickerPrimaryBlue
-        // Ensure text/icon on this blue is readable (might inherit from currentAppColors.onPrimary or set explicitly)
-        onPrimary = Color.Black, // Adjust if needed based on your blue's brightness
+        primaryVariant = pickerPrimaryBlueVariant,
+
+        // Secondary colors (often used for selection, sliders, highlights)
+        secondary = pickerPrimaryBlue,
+        secondaryVariant = pickerPrimaryBlueVariant,
     )
 
-
-
+    // UI Layout
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 8.dp, end = 4.dp, top = 0.dp, bottom = 5.dp), // Adjusted padding slightly
-        verticalArrangement = Arrangement.Center, // Center vertically
+            .padding(start = 8.dp, end = 4.dp, top = 25.dp, bottom = 15.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Select Birth Date",
             style = MaterialTheme.typography.title3,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            // Show the latest allowed year clearly
-            text = "(Must be ${maxDate.year} or earlier)",
-            style = MaterialTheme.typography.caption1,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(2.dp))
 
-        // Apply the modified colors only to the composables inside this block
+        // Apply the highly customized theme colors *only* to the DatePicker
         MaterialTheme(colors = pickerSpecificColors) {
             DatePicker(
                 onDateConfirm = onDateSelectedAndValid,
                 date = defaultDate,
                 fromDate = minDate,
                 toDate = maxDate
-                // The DatePicker will now use pickerSpecificColors.primary
-                // Note: Internal text size still cannot be changed here
-            )
-        } // --- End Local Theme ---
+             )
+        }
     }
 }
