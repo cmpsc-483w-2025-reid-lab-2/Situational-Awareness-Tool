@@ -162,7 +162,7 @@ fun SettingsScreen(
             ToggleChip(
                 checked = isAnimationEnabled,
                 onCheckedChange = onToggleAnimation,
-                label = { Text("Heart Rate Animation") },
+                label = { Text("Heart Beat Animation") },
                 toggleControl = {
                     Switch(
                         checked = isAnimationEnabled,
