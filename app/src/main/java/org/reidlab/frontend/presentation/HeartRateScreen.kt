@@ -50,6 +50,8 @@ import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import org.reidlab.frontend.data.HeartRateSessionManager
+
 
 
 // Zone colors based on:
@@ -186,6 +188,10 @@ fun HeartRateScreen(
     }
 
     val context = LocalContext.current
+
+    // Initiate sessionManager for data management
+    val sessionManager = remember { HeartRateSessionManager(context) }
+
     val vibrator = remember {
         context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
     }
@@ -231,6 +237,19 @@ fun HeartRateScreen(
             }
         }
         previousZone = currentZone // Update previous zone *after* checking entry condition
+    }
+
+    // Logging HR to session manager
+    if (isDataActuallyAvailable && activeHrInt != null && isTimerRunning) {
+        sessionManager.record(activeHrInt)
+    }
+
+    LaunchedEffect(isTimerRunning) {
+        if (isTimerRunning) {
+            sessionManager.startSession()
+        } else {
+            sessionManager.stopAndExportCsv()
+        }   
     }
 
     LaunchedEffect(currentZone, isHapticFeedbackEnabled) { // Keyed on zone and setting
