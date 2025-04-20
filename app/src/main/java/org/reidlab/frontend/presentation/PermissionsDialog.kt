@@ -40,138 +40,139 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import org.reidlab.frontend.R
 
-
 // GrantDenyButtons composable remains the same as previously defined
 @Composable
 fun GrantDenyButtons(onGrant: () -> Unit, onDeny: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = onDeny,
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.secondary,
-                    contentColor = MaterialTheme.colors.onSecondary
-                ),
-                modifier = Modifier.size(ButtonDefaults.DefaultButtonSize)
-            ) {
-                Icon(Icons.Filled.Close, stringResource(R.string.deny_permission), Modifier.size(24.dp))
-            }
-            Button(
-                onClick = onGrant,
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.onPrimary
-                ),
-                modifier = Modifier.size(ButtonDefaults.DefaultButtonSize)
-            ) {
-                Icon(Icons.Filled.Check, stringResource(R.string.grant_permission), Modifier.size(24.dp))
-            }
-        }
+  Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Row(
+      horizontalArrangement = Arrangement.spacedBy(16.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Button(
+        onClick = onDeny,
+        colors =
+          ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
+          ),
+        modifier = Modifier.size(ButtonDefaults.DefaultButtonSize)
+      ) {
+        Icon(Icons.Filled.Close, stringResource(R.string.deny_permission), Modifier.size(24.dp))
+      }
+      Button(
+        onClick = onGrant,
+        colors =
+          ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary
+          ),
+        modifier = Modifier.size(ButtonDefaults.DefaultButtonSize)
+      ) {
+        Icon(Icons.Filled.Check, stringResource(R.string.grant_permission), Modifier.size(24.dp))
+      }
     }
+  }
 }
-
 
 @OptIn(ExperimentalPermissionsApi::class) // Opt-in for Accompanist Permissions
 @Composable
 fun PermissionsScreen(
-    onPermissionGranted: () -> Unit,
-    onPermissionDenied: () -> Unit, // Called if user presses Deny button OR denies in system dialog
-    headerTextSize: TextUnit = 16.5.sp,
-    bodyTextSize: TextUnit = 13.sp
+  onPermissionGranted: () -> Unit,
+  onPermissionDenied: () -> Unit, // Called if user presses Deny button OR denies in system dialog
+  headerTextSize: TextUnit = 16.5.sp,
+  bodyTextSize: TextUnit = 13.sp
 ) {
-    val permission = Manifest.permission.BODY_SENSORS
+  val permission = Manifest.permission.BODY_SENSORS
 
-    // Use rememberPermissionState from Accompanist
-    val permissionState = rememberPermissionState(
-        permission = permission,
-        onPermissionResult = { isGranted ->
-            // This is called AFTER the system dialog closes
-            if (isGranted) {
-                onPermissionGranted()
-            } else {
-                // User denied the permission in the system dialog.
-                // You might want different behavior here than pressing the initial "Deny" button.
-                // For now, we call the same denial callback.
-                onPermissionDenied()
-            }
+  // Use rememberPermissionState from Accompanist
+  val permissionState =
+    rememberPermissionState(
+      permission = permission,
+      onPermissionResult = { isGranted ->
+        // This is called AFTER the system dialog closes
+        if (isGranted) {
+          onPermissionGranted()
+        } else {
+          // User denied the permission in the system dialog.
+          // You might want different behavior here than pressing the initial "Deny" button.
+          // For now, we call the same denial callback.
+          onPermissionDenied()
         }
+      }
     )
 
-    // This LaunchedEffect triggers the callback if the state is already Granted
-    // when the composable enters the composition, or if it becomes Granted later
-    // without going through the onPermissionResult lambda (e.g., granted via settings).
-    LaunchedEffect(permissionState.status) {
-        if (permissionState.status.isGranted) {
-            onPermissionGranted()
+  // This LaunchedEffect triggers the callback if the state is already Granted
+  // when the composable enters the composition, or if it becomes Granted later
+  // without going through the onPermissionResult lambda (e.g., granted via settings).
+  LaunchedEffect(permissionState.status) {
+    if (permissionState.status.isGranted) {
+      onPermissionGranted()
+    }
+  }
+
+  // Scroll and Focus state for Rotary Input
+  val scrollState = rememberScrollState()
+  val focusRequester = remember { FocusRequester() }
+
+  LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+  CustomTheme { // Apply the custom theme
+    Column(
+      modifier =
+        Modifier.fillMaxSize()
+          .padding(horizontal = 24.dp, vertical = 0.dp)
+          .verticalScroll(scrollState)
+          .rotaryScrollable(
+            behavior = RotaryScrollableDefaults.behavior(scrollableState = scrollState),
+            focusRequester = focusRequester,
+            reverseDirection = false
+          ),
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      // Header Text
+      Text(
+        text = stringResource(R.string.permission_header),
+        style =
+          TextStyle(
+            fontSize = headerTextSize,
+            fontFamily = MaterialTheme.typography.title2.fontFamily,
+            fontWeight = MaterialTheme.typography.title2.fontWeight,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colors.onBackground
+          ),
+        modifier = Modifier.padding(bottom = 8.dp, top = 25.dp)
+      )
+
+      // Modify the text or UI if permissionState.status.shouldShowRationale is true
+      val explanationText = stringResource(R.string.permission_body)
+
+      // Body Text explaining why permission is needed
+      Text(
+        text = explanationText,
+        style =
+          TextStyle(
+            fontSize = bodyTextSize,
+            fontFamily = MaterialTheme.typography.body2.fontFamily,
+            fontWeight = MaterialTheme.typography.body2.fontWeight,
+            textAlign = TextAlign.Left,
+            color = MaterialTheme.colors.onBackground
+          ),
+        modifier = Modifier.padding(bottom = 16.dp)
+      )
+
+      // Grant/Deny Buttons
+      GrantDenyButtons(
+        onGrant = {
+          // Use the launchPermissionRequest function from PermissionState
+          permissionState.launchPermissionRequest()
+        },
+        onDeny = {
+          // User explicitly denied *without* seeing system dialog
+          onPermissionDenied()
         }
+      )
+
+      Spacer(modifier = Modifier.height(16.dp)) // Spacer at the bottom
     }
-
-    // Scroll and Focus state for Rotary Input
-    val scrollState = rememberScrollState()
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
-    CustomTheme { // Apply the custom theme
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 0.dp)
-                .verticalScroll(scrollState)
-                .rotaryScrollable(
-                    behavior = RotaryScrollableDefaults.behavior(scrollableState = scrollState),
-                    focusRequester = focusRequester,
-                    reverseDirection = false
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Header Text
-            Text(
-                text = stringResource(R.string.permission_header),
-                style = TextStyle(
-                    fontSize = headerTextSize,
-                    fontFamily = MaterialTheme.typography.title2.fontFamily,
-                    fontWeight = MaterialTheme.typography.title2.fontWeight,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.onBackground
-                ),
-                modifier = Modifier.padding(bottom = 8.dp, top = 25.dp)
-            )
-
-            // Modify the text or UI if permissionState.status.shouldShowRationale is true
-            val explanationText = stringResource(R.string.permission_body)
-
-            // Body Text explaining why permission is needed
-            Text(
-                text = explanationText,
-                style = TextStyle(
-                    fontSize = bodyTextSize,
-                    fontFamily = MaterialTheme.typography.body2.fontFamily,
-                    fontWeight = MaterialTheme.typography.body2.fontWeight,
-                    textAlign = TextAlign.Left,
-                    color = MaterialTheme.colors.onBackground
-                ),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            // Grant/Deny Buttons
-            GrantDenyButtons(
-                onGrant = {
-                    // Use the launchPermissionRequest function from PermissionState
-                    permissionState.launchPermissionRequest()
-                },
-                onDeny = {
-                    // User explicitly denied *without* seeing system dialog
-                    onPermissionDenied()
-                }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp)) // Spacer at the bottom
-        }
-    }
+  }
 }
