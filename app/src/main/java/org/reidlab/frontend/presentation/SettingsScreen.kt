@@ -11,7 +11,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -33,6 +36,7 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.ToggleChip
 import androidx.wear.compose.material.ToggleChipDefaults
+import org.reidlab.frontend.presentation.SessionCompleteDialog
 import org.reidlab.frontend.R
 
 
@@ -50,6 +54,7 @@ fun SettingsScreen(
     isHapticFeedbackEnabled: Boolean,
     onToggleHapticFeedback: (Boolean) -> Unit
 ) {
+    var showSessionCompleteDialog by remember { mutableStateOf(false) }
     // Add ScrollState and FocusRequester
     val scrollState = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
@@ -92,7 +97,12 @@ fun SettingsScreen(
 
             // Start/Stop Button
             Button(
-                onClick = { if (isTimerRunning) onStopTimer() else onStartTimer() },
+                onClick = { if (isTimerRunning) {
+                    onStopTimer()
+                    showSessionCompleteDialog = true
+                } else {
+                    onStartTimer()
+                } },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = if (isTimerRunning) MaterialTheme.colors.error else Color(0xFFAAE0FA),
@@ -210,5 +220,10 @@ fun SettingsScreen(
             // Add some end padding so the button isn't cut off
             Spacer(Modifier.height(35.dp))
         }
+        SessionCompleteDialog(
+            showDialog = showSessionCompleteDialog, // Control visibility with state
+            onDismissRequest = { showSessionCompleteDialog = false }, // Hide on dismiss
+            onAcceptClick = { showSessionCompleteDialog = false }    // Hide on accept
+        )
     }
 }

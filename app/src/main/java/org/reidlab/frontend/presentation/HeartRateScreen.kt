@@ -50,6 +50,13 @@ import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import org.reidlab.frontend.data.HeartRateSessionManager
+import androidx.compose.runtime.setValue // Add this import
+import androidx.compose.runtime.getValue // Add this import
+import androidx.compose.runtime.mutableStateOf // Add this import
+import androidx.compose.runtime.remember // Add this import
+import androidx.wear.compose.material.Scaffold // Ensure Scaffold is imported
+import android.util.Log
 
 
 // Zone colors based on:
@@ -121,6 +128,12 @@ fun HeartRateScreen(
     onStopTimer: () -> Unit,
     birthDate: LocalDate?
 ) {
+
+    var showSessionCompleteDialog by remember { mutableStateOf(false) }
+    val handleStopTimerClick = {
+        onStopTimer() // Call the original function to stop the timer logic
+        showSessionCompleteDialog = true // Set state to show the dialog
+    }
     // Collect State from ViewModel
     val uiState by measureDataViewModel.uiState
     val availability by measureDataViewModel.availability
@@ -186,6 +199,10 @@ fun HeartRateScreen(
     }
 
     val context = LocalContext.current
+
+    // Initiate sessionManager for data management
+    val sessionManager = remember { HeartRateSessionManager(context) }
+
     val vibrator = remember {
         context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
     }
@@ -233,6 +250,30 @@ fun HeartRateScreen(
         previousZone = currentZone // Update previous zone *after* checking entry condition
     }
 
+    LaunchedEffect(activeHrInt, isTimerRunning) {
+        // Logging HR to session manager
+        if (isTimerRunning && activeHrInt != null) {
+            sessionManager.record(activeHrInt)
+        }
+    }
+
+    LaunchedEffect(isTimerRunning) {
+        if (isTimerRunning) {
+            sessionManager.startSession()
+        } else {
+            val file = sessionManager.stopAndExportCsv()
+            file?.let {
+            sessionManager.uploadCsvToServer(
+                file = it,
+                endpointUrl = "https://reid-lab2-backend.onrender.com/api/upload/heart-rate"
+            ) { success, message ->
+                Log.d("HeartRateUpload", message)
+                // You can optionally show a toast or feedback here later
+                }
+            }
+        }   
+    }
+
     LaunchedEffect(currentZone, isHapticFeedbackEnabled) { // Keyed on zone and setting
         if (isHapticFeedbackEnabled && vibrator?.hasVibrator() == true) {
             if (currentZone == 5) { // Entered or staying in Zone 5
@@ -275,7 +316,7 @@ fun HeartRateScreen(
                 isTimerRunning = isTimerRunning,
                 elapsedTimeMillis = elapsedTimeMillis,
                 showMilliseconds = showMilliseconds,
-                onStopTimer = onStopTimer
+                onStopTimer = handleStopTimerClick
             )
         } else {
             // Render UI based on Real Data State (UiState, availability, etc.)
@@ -305,10 +346,17 @@ fun HeartRateScreen(
                         isTimerRunning = isTimerRunning,
                         elapsedTimeMillis = elapsedTimeMillis,
                         showMilliseconds = showMilliseconds,
-                        onStopTimer = onStopTimer
+                        onStopTimer = handleStopTimerClick
                     )
                 }
             }
+            SessionCompleteDialog(
+                showDialog = showSessionCompleteDialog, // Pass the state directly
+                onDismissRequest = { showSessionCompleteDialog = false }, // Hide on dismiss
+                onAcceptClick = { showSessionCompleteDialog = false }    // Hide on accept click
+                // Optionally add modifiers here if needed:
+                // modifier = Modifier.padding(bottom = 10.dp)
+            )
         }
     }
 }
