@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.spotless)
 }
 
 android {
@@ -14,7 +15,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1.9"
-
     }
 
     buildTypes {
@@ -40,6 +40,18 @@ android {
     }
 }
 
+spotless {
+    kotlin {
+        ktfmt().googleStyle()
+        // ktfmt().dropboxStyle()
+
+        // Set the files to format
+        target("src/**/*.kt")
+        targetExclude("build/**/*.kt")
+        // targetExclude("src/main/kotlin/com/example/dontformat/*")
+    }
+}
+
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.compose.material)
@@ -50,7 +62,6 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
-    implementation(libs.compose.material)
     implementation(libs.compose.foundation)
     implementation(libs.activity.compose)
     implementation(libs.core.splashscreen)
