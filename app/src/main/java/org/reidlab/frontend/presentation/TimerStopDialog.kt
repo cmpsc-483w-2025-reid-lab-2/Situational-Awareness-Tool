@@ -57,7 +57,7 @@ fun SessionCompleteDialog(
                 modifier = Modifier.fillMaxWidth()
             )
             Text (
-                text = "CSV now available to pulled from the watch.",
+                text = "CSV now available to be pulled from the watch.",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onSurface,
