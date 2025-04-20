@@ -51,6 +51,8 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import org.reidlab.frontend.data.HeartRateSessionManager
+import android.util.Log
+
 
 
 
@@ -239,16 +241,27 @@ fun HeartRateScreen(
         previousZone = currentZone // Update previous zone *after* checking entry condition
     }
 
-    // Logging HR to session manager
-    if (isDataActuallyAvailable && activeHrInt != null && isTimerRunning) {
-        sessionManager.record(activeHrInt)
+    LaunchedEffect(activeHrInt, isTimerRunning) {
+        // Logging HR to session manager
+        if (isTimerRunning && activeHrInt != null) {
+            sessionManager.record(activeHrInt)
+        }
     }
 
     LaunchedEffect(isTimerRunning) {
         if (isTimerRunning) {
             sessionManager.startSession()
         } else {
-            sessionManager.stopAndExportCsv()
+            val file = sessionManager.stopAndExportCsv()
+            file?.let {
+            sessionManager.uploadCsvToServer(
+                file = it,
+                endpointUrl = "https://reid-lab2-backend.onrender.com/api/upload/heart-rate"
+            ) { success, message ->
+                Log.d("HeartRateUpload", message)
+                // You can optionally show a toast or feedback here later
+                }
+            }
         }   
     }
 
