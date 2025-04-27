@@ -414,7 +414,7 @@ private fun HeartRateDisplayContent(
       verticalArrangement = Arrangement.Center
     ) {
       Text(
-        text = "Current",
+        text = if (isDataAvailable) "Current" else "Reading...",
         color = Color.White,
         fontSize = 14.sp,
         style = TextStyle(letterSpacing = 0.1.em)
