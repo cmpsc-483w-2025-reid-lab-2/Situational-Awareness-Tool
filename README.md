@@ -1,7 +1,7 @@
 # Situational Awareness
 
 ## App releases 
-Releases can be found [here](https://github.com/cmpsc-483w-2025-reid-lab-2/Situational-Awareness-Tool/releases). Please note that this app requires a WearOS watch with WearOS 5.x or above running on it.
+Releases can be found [here](https://github.com/cmpsc-483w-2025-reid-lab-2/Situational-Awareness-Tool/releases). Note that this app requires a WearOS watch with WearOS 5.x or above running on it.
 
 ## Screenshots
 
