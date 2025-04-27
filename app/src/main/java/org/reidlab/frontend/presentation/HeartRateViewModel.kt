@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 REID Lab 2
+
 package org.reidlab.frontend.presentation
 
 import androidx.compose.runtime.MutableState
