@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 REID Lab 2
+
 package org.reidlab.frontend.presentation.theme
 
 import androidx.compose.runtime.Composable
