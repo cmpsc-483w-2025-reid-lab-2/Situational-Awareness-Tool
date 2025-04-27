@@ -1,7 +1,15 @@
 # Situational Awareness
+A WearOS app for training and improving situational awareness under stress.
 
-## App releases 
-Releases can be found [here](https://github.com/cmpsc-483w-2025-reid-lab-2/Situational-Awareness-Tool/releases). Note that this app requires a WearOS watch with WearOS 5.x or above running on it.
+## Key Features
+- **Heart-Rate Monitoring**: Live tracking via Health Services API with five stress zones.  
+- **Timed Sessions & Export**: Run sessions and auto-export CSV logs.  
+- **Zone Alerts**: Haptic/vibration alerts on zone changes.  
+- **Configurable Settings**: Customize alerts, auto-start, and CSV format.  
+
+## Releases & Change logs
+Releases and their respective changelogs can be found [here](https://github.com/cmpsc-483w-2025-reid-lab-2/Situational-Awareness-Tool/releases). 
+</br>***Note that this app requires a WearOS watch with WearOS 5.x or above running on it.***
 
 ## Screenshots
 
@@ -13,7 +21,7 @@ Releases can be found [here](https://github.com/cmpsc-483w-2025-reid-lab-2/Situa
 
 <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Timer.png" width="150" height="150" /> <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Session Complete.png" width="150" height="150" />
 
-### Settings
+### Settings & Preferences
 
 <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Settings%201.png" width="150" height="150" /> <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Settings%202.png" width="150" height="150" /> <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Settings%203.png" width="150" height="150" />
 
@@ -21,25 +29,14 @@ Releases can be found [here](https://github.com/cmpsc-483w-2025-reid-lab-2/Situa
 
 <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Zone%201.png" width="150" height="150" /> <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Zone%202.png" width="150" height="150" /> <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Zone%203.png" width="150" height="150" /> <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Zone%204.png" width="150" height="150" /> <img src="https://raw.githubusercontent.com/reid-lab2/Situational-Awareness-Tool/refs/heads/main/Screenshots/Zone%205.png" width="150" height="150" />
 
-## Project Overview
-This project focuses on enhancing situational awareness for individuals, specifically police officers, operating in high-risk, low-time scenarios. We are developing a mobile application designed as a training tool to help officers recognize physiological stress indicators, manage their responses, and ultimately improve their decision-making under pressure.
+## Technologies Used
+- Kotlin
+- Jetpack Compose
+- Android Health Services API
+- SQLite
+- OpenCSV Libraries
+- ViewModel & LiveData
 
-## Project Goal
-By the end of this project (Spring 2025), we aim to deliver an application that serves as a **practical, accessible, and cost-effective alternative or supplement** to current situational awareness and stress management training tools, many of which are beyond the reach of smaller police departments. The ultimate goal is to help circumvent tragedies linked to impaired decision-making within the police force.
-
-## The Team (REID Lab 2 - 2025)
-
-* **Project Manager:** Marc Singer
-* **Frontend Department:**
-    * Ann Zezyus
-    * Sourajit Karmakar
-    * Seongjin Baek
-* **Backend Department:**
-    * Kevin Mcknight
-    * Joel Guzman
-    * Abhinav Sama
-    * Anirban Maity
-
-
-## Sponsor
-* **Dr. Tahira Reid Smith**
+## License
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).  
+You are free to use, modify, and distribute this software with proper attribution.
